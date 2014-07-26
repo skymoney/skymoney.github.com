@@ -8,8 +8,8 @@ title: 程的IT小作坊
   <div class='span6'>
     <h3>{{ post.title }}</h3>
     <p class='muted'>Post On {{ post.date | date_to_string}}</p>
-    <span class="label label-info"><strong>{{ page.tag }}</strong></span>
-    <p><strong>摘要:&nbsp;&nbsp;</strong>{{ page.description }}<a href="http://www.skymoneyc.com/{{ post.url }}">阅读全文</a></p>
+    <span class="label label-info"><strong>{{ post.tag }}</strong></span>
+    <p><strong>摘要:&nbsp;&nbsp;</strong>{{ post.description }}<a href="http://www.skymoneyc.com/{{ post.url }}">阅读全文</a></p>
   </div>
   {% endfor %}
 </div>
