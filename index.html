@@ -48,6 +48,12 @@
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
+      <ul>
+　　{% for post in site.posts %}
+　　　　<li>{{ post.date | date_to_string }} <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
+　　{% endfor %}
+</ul>
+<!--
       <section id="main_content" class="inner">
         <h2><a href=''>HMM学习——预测</a></h2>
         <p class='muted'><span>Puslish On 25 July, Mon, 2014</span></p>
@@ -69,6 +75,7 @@
         <span class='label label-info blog_tag'><strong>数据分析</strong></span>
         <p><strong>摘要:</strong>&nbsp;&nbsp;最近一段时间主要重心在Amazon电商数据分析上，这是一个偏数据分析和可视化的项目。具体来说就是先获取Amazon的商品数据，数据清洗和持久化存储后作为我们自己的数据源。<a href='blog/amazon_data_ana_data_fetch.html'>阅读全文</a></p>
       </section>
+-->
     </div>
 
     <!-- FOOTER  -->
