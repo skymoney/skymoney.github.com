@@ -1,15 +1,29 @@
 ---
 layout: default
-title: 程的IT小作坊
+title: 上善若水
 ---
+<div class='span12'>
 <div id="mainContent" class='span8'>
   <h2 class='muted'>最新文章</h2>
   {% for post in site.posts%}
   <div class='span6'>
     <h3><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h3>
     <p class='muted'>Post On {{ post.date | date_to_string}}</p>
-    <span class="label label-info blog_tag"><strong>{{ post.tag }}</strong></span>
+    {% for tag in post.tag %}
+      <span class="label label-info blog_tag"><strong>{{ tag }}</strong></span>
+    {% endfor %}
     <p><strong>摘要:&nbsp;&nbsp;</strong>{{ post.description }}<a href="{{ site.url }}{{ post.url }}">阅读全文</a></p>
   </div>
   {% endfor %}
+  <div class='span6'>
+    <span class='muted pull-right'><a href="#">更多文章</a></span>
+  </div>
+</div>
+<!--
+<div id='sideBar' class='span4 pull-right'>
+ <div id='weibo_tool'>
+  <iframe width="100%" height="300" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=300&fansRow=1&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1648836677&verifier=1a722b18&dpc=1"></iframe>
+</div>
+</div>
+-->
 </div>

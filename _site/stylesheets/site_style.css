@@ -13,6 +13,11 @@
 	display: block;
 }
 
+#sideBar {
+	padding-top: 15%;
+	padding-right: 0px;
+}
+
 .blog {
 	font-size: 24px;
 	font-family: Microsoft YaHei;
@@ -21,4 +26,8 @@
 
 .blog_tag {
 	font-size: 14px;
+}
+
+.font_large {
+	font-size: 20px;
 }

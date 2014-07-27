@@ -1,0 +1,32 @@
+---
+layout: blog
+title: BeautifulSoup下Unicode乱码解决
+description: 今天在用scrapy爬某个网站的数据，其中DOM解析我用的是BeautifulSoup，速度上没有XPath来得快，不过因为用了习惯了，所以一直用的bs，版本是bs4
+tag: ['bs4', 'python'] 
+---
+<div id='mainContent' class='span9'>
+	<h1 class='text-center'>BeautifulSoup下Unicode乱码解决</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class'text-center'>
+	<span class='font_large'><strong>关键词:</strong></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>bs4</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>python</span></span>
+	<hr style="border-top:1px solid #aaa;">
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今天在用scrapy爬某个网站的数据，其中DOM解析我用的是BeautifulSoup，速度上没有XPath来得快，不过因为用了习惯了，所以一直用的bs，版本是bs4。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;不过在爬取过程中遇到了一些问题，其中一个是Unicode转码问题，这也算是python中一个著名问题了。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我遇到的算是BeautifulSoup中的一个奇葩bug吧，在网页中经常会有 &nbsp 这种标记，称为 non-breaking space character, 本来这个应该是忽略的，但在bs中会把这个符号转义成为一个unicode编码  \xa0, 这就导致了后面如果要对内容处理的话会出现UnicodeError， 特别是如果使用的是Console或者scrapy中写文件、写数据库的pipeline操作时，出现无法转义的错误。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;那么该如何解决呢，其实不难</p>
+	<pre>
+## python code
+	s = u'\xa0'
+	s.replace(u'\xa0', u'')
+	</pre>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之后就可以对s进行encode，比如：</p>
+	<pre>
+## python code
+	s = u'\xa0'
+	s.replace(u'\xa0', u'').encode('utf-8')
+	</pre>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;特别是在我的项目中，如果需要把数据写到MongoDB中，这个bug fix完后，写数据立刻搞定，爬取的内容全部写到MongoDB中。</p>
+	<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>
