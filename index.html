@@ -5,6 +5,7 @@ title: 上善若水
 <div class='span12'>
 <div id="mainContent" class='span8'>
   <h2 class='muted'>最新文章</h2>
+  <hr style="border-top:2px solid #aaa;">
   {% for post in paginator.posts%}
   <div class='span6'>
     <h3><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h3>
@@ -13,6 +14,7 @@ title: 上善若水
       <span class="label label-info blog_tag"><strong>{{ tag }}</strong></span>
     {% endfor %}
     <p><strong>摘要:&nbsp;&nbsp;</strong>{{ post.description }}<a href="{{ site.url }}{{ post.url }}">阅读全文</a></p>
+    <hr style="border-top:1px solid #aaa;">
   </div>
   {% endfor %}
   <div class='span6'>
