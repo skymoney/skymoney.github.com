@@ -4,4 +4,16 @@ title: 我的博客 | 上善若水
 ---
 <div id='mainContent' class='span9'>
 	<h1 class='muted'>全部文章</h1>
+	<hr style="border-top:2px solid #aaa;">
+	{% for post in site.posts %}
+	<div class='span6'>
+    <h3><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h3>
+    <p class='muted'>Post On {{ post.date | date_to_string}}</p>
+    {% for tag in post.tag %}
+      <span class="label label-info blog_tag"><strong>{{ tag }}</strong></span>
+    {% endfor %}
+    <p><strong>摘要:&nbsp;&nbsp;</strong>{{ post.description }}<a href="{{ site.url }}{{ post.url }}">阅读全文</a></p>
+    <hr style="border-top:1px solid #aaa;">
+  </div>
+	{% endfor %}
 </div>
