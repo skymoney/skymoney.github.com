@@ -6,10 +6,10 @@ title: 程的IT小作坊
   <h2 class='muted'>最新文章</h2>
   {% for post in site.posts%}
   <div class='span6'>
-    <h3><a href="http://www.skymoneyc.com/{{ post.url }}">{{ post.title }}</a></h3>
+    <h3><a href="{{ site.localurl }}{{ post.url }}">{{ post.title }}</a></h3>
     <p class='muted'>Post On {{ post.date | date_to_string}}</p>
     <span class="label label-info blog_tag"><strong>{{ post.tag }}</strong></span>
-    <p><strong>摘要:&nbsp;&nbsp;</strong>{{ post.description }}<a href="http://www.skymoneyc.com/{{ post.url }}">阅读全文</a></p>
+    <p><strong>摘要:&nbsp;&nbsp;</strong>{{ post.description }}<a href="{{ site.url }}{{ post.url }}">阅读全文</a></p>
   </div>
   {% endfor %}
 </div>

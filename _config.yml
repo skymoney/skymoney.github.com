@@ -1,1 +1,3 @@
-baseurl: 'http://www.skymoneyc.com'
+baseurl: /
+url: 'http://www.skymoneyc.com'
+localurl: 'http://localhost:4000'

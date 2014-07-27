@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='../../../../stylesheets/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='../../../../stylesheets/site_style.css'>
+    <script type="text/javascript" src='../../../../javascripts/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='../../../../javascripts/bootstrap.min.js'></script>
+　　<title>数学之美：HMM学习——介绍</title>
+	
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id='mainContent' class='span9'>
+	<h1 class='text-center'>数学之美:HMM学习——介绍</h1>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一直想写点关于数学方面的blog，这对于数据挖掘分析，NLP处理等都有着比较重要的作用，之前在CSDN上想写点HMM方面的文章，一直没写成，最近几天终于抽点时间完成了HMM的文章，加以整理，遂有这个系列文章。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先是对HMM模型的介绍。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;传统的马尔可夫模型（Markov Model）主要描述了具有马尔可夫性质的一个随机过程。更特殊的来讲，是离散的马尔可夫过程——马尔可夫链(Markov Chain)。马尔可夫性质是指在给定当前和之前已发生事件后，未来发生事件仅依赖当前事件。马尔可夫过程主要具有两个性质：</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1）  有限视野性：即这一刻发生的事件依赖于之前有限的已发生事件，既有</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2）  时间不变性 </p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;现实中很多现象都可以用马尔可夫过程来表示，例如交通红绿灯的转换，每一次灯的状态依赖于上一次的状态（当然，排除了一些外部非正常因素），并且，在可预见时间内，状态的变化规律是不变的，不会说一直是红灯后是黄灯，突然变成红灯后还是红灯。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于马尔可夫模型，我们可以建立一个量化模型，简单来说，这个模型包括了一个矩阵——转移矩阵（transmission matrix），和一个初始向量pi向量。转移矩阵用来表述从一个状态转移到另一个状态的发生概率，而pi向量用来表述模型的初始状态。通过这个模型，可以解决马尔可夫过程的一些问题，例如预测等问题。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当然，现实中更多的相关现象是马尔可夫过程的一个隐式变种，这就是我们今天要讨论的隐马尔可夫模型。顾名思义，在隐马尔可夫模型中，状态发生序列是未知的，只能通过一些观察得到的另一组状态发生序列来获得相关信息。例如，在语音识别中，当然无法直接识别语言，我们实际得到的只是某一个人发出的声音，而这个声音是真正的声音（这里指人类某种语言的所有语调等信息）通过和声带，空气等信息混合表现得到的。再例如一个比较常见的例子——盲人和天气，住在海边山洞中的盲人会通过石头上海藻状态来获知天气状态而无法直接得到天气状态，这里，天气状态就是一个隐藏状态，而海藻状态则是对应的可以观测到且和天气有关的状态。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;隐马尔可夫模型相比马尔可夫模型，需要引入更多描述量，一般来说，HMM模型需要一个三元组来描述，HMM_Model = <pi, A, B>， 这里pi还是初始向量，这里是对隐藏状态的初始概率，A是转移矩阵，描述的隐藏状态之间的转移概率，B则是引入的混淆矩阵(Confusion Matrix)，即连接隐藏状态和可观察状态之间的桥梁。如下图一个例子所示：</p>
+	<img src='../../../../../imgs/hmm_intro_1.gif'></img>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于HMM的模型介绍就这么多，其实HMM模型很简单，就是一个三元组的量化描述，但是针对这个模型，主要有三个问题，而这三个问题，也分别引出了三个HMM不同方面的应用：</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1，  预测。即给定一个HMM和观察状态序列，我们想知道根据这个HMM产生这个观察序列的概率有多大。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2，  解码。即给定一个HMM和观察状态序列，我们想知道什么样的隐藏状态序列最有可能产生这样的观察序列。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3，  学习。这里HMM的模型是未知的，给出已知的观察序列和隐藏状态集合，我们想建立最有可能的HMM，这也是三个问题中最难的。</p>
+	<p class='muted' style='font-size: 20px;'>Post On 10 Jul 2014 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>
