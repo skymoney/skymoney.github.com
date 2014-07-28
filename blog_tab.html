@@ -2,12 +2,22 @@
 layout: default
 title: 我的博客 | 上善若水
 ---
-<div id='mainContent' class='span9'>
+<div class='span12'>
+<div id='sideBar' class='span3'>
+  <!--
+  <ul class='nav nav-list'>
+    <li class='nav-header'> 所有Tag</li>
+  {% for tag in site.tags %}
+    <li><a href='blog_tab.html?tag={{ tag[0] }}'>{{ tag[0]}}&nbsp;({{ tag | last | size}})</a></li>
+  {% endfor %}
+</ul>-->
+</div>
+<div id='mainContent' class='span6' style='padding-left: 0px;'>
 	<h1 class='muted'>全部文章</h1>
 	<hr style="border-top:2px solid #aaa;">
 	{% for post in site.posts %}
-	<div class='span6'>
-    <h3><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h3>
+	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
+    <h3><a href="{{ site.localurl }}{{ post.url }}">{{ post.title }}</a></h3>
     <p class='muted'>Post On {{ post.date | date_to_string}}</p>
     {% for tag in post.tag %}
       <span class="label label-info blog_tag"><strong>{{ tag }}</strong></span>
@@ -17,3 +27,42 @@ title: 我的博客 | 上善若水
   </div>
 	{% endfor %}
 </div>
+<div class='span3'></div>
+</div>
+<script type='text/javascript'>
+$.extend({
+  getUrlVars: function(){
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  },
+  getUrlVar: function(name){
+    return $.getUrlVars()[name];
+  }
+});
+
+  window.onload = function(){
+    var dataStr = '{ {% for t in site.tags %}{% if t[0] != site.tags.first[0] %},{% endif%}' + '"{{ t[0] }}": [{% for post in t[1] %}{% if post != t[1].first %},{% endif %}' + '{"url": "{{post.url}}", "title": "{{ post.title }}"}' + '{% endfor %}]{%endfor%} }'
+
+  tagName = $.getUrlVar('tag')
+  json_data = JSON.parse(dataStr)
+  posts = json_data[tagName]
+
+  if(tagName != undefined){
+    dom = ''
+    for (var i=0; i<posts.length; i++){
+      dom += "<span>" + posts[i]['title'] +"</span>"
+    }
+
+    $('#mainContent').html('')
+    $('#mainContent').html("<h1 class='muted'>全部文章</h1>" + 
+      "<hr style='border-top:2px olid #aaa;'>" + dom)
+  }
+}
+</script>
