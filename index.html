@@ -11,7 +11,7 @@ title: 上善若水
     <h3><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h3>
     <p class='muted'>Post On {{ post.date | date_to_string}}</p>
     关键词{% for tag in post.tags %}
-      <span class=" blog_tag">
+      <span class="label label-info blog_tag">
         <strong>{{ tag }}</strong>
       </span>
     {% endfor %}
