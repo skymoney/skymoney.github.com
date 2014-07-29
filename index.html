@@ -8,11 +8,11 @@ title: 上善若水
   <hr style="border-top:2px solid #aaa;">
   {% for post in paginator.posts%}
   <div class='span6'>
-    <h3><a href="{{ site.localurl }}{{ post.url }}">{{ post.title }}</a></h3>
+    <h3><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h3>
     <p class='muted'>Post On {{ post.date | date_to_string}}</p>
     关键词{% for tag in post.tags %}
       <span class=" blog_tag">
-        <strong><a href='{{ site.localurl}}/../blog_tab.html?tag={{ tag }}'>{{ tag }}</a></strong>
+        <strong>{{ tag }}</strong>
       </span>
     {% endfor %}
     <p><strong>摘要:&nbsp;&nbsp;</strong>{{ post.description }}<a href="{{ site.url }}{{ post.url }}">阅读全文</a></p>
