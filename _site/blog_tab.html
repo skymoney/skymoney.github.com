@@ -39,9 +39,9 @@
   <ul class='nav nav-list'>
     <li class='nav-header'> 所有Tag</li>
   
-    <li><a href='blog_tab.html?tag=数学'>数学&nbsp;(2)</a></li>
+    <li><a href='blog_tab.html?tag=数学'>数学&nbsp;(3)</a></li>
   
-    <li><a href='blog_tab.html?tag=HMM'>HMM&nbsp;(2)</a></li>
+    <li><a href='blog_tab.html?tag=HMM'>HMM&nbsp;(3)</a></li>
   
     <li><a href='blog_tab.html?tag=感悟'>感悟&nbsp;(1)</a></li>
   
@@ -49,13 +49,37 @@
   
     <li><a href='blog_tab.html?tag=bs4'>bs4&nbsp;(1)</a></li>
   
-    <li><a href='blog_tab.html?tag=python'>python&nbsp;(1)</a></li>
+    <li><a href='blog_tab.html?tag=python'>python&nbsp;(2)</a></li>
+  
+    <li><a href='blog_tab.html?tag=LeetCode'>LeetCode&nbsp;(1)</a></li>
+  
+    <li><a href='blog_tab.html?tag=算法'>算法&nbsp;(1)</a></li>
   
 </ul>-->
 </div>
 <div id='mainContent' class='span6' style='padding-left: 0px;'>
 	<h1 class='muted'>全部文章</h1>
 	<hr style="border-top:2px solid #aaa;">
+	
+	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
+    <h3><a href="http://localhost:4000/2014/07/29/2014-07-28-leetcode-solution.html">LeetCode解答</a></h3>
+    <p class='muted'>Post On 29 Jul 2014</p>
+    
+    <p><strong>摘要:&nbsp;&nbsp;</strong><a href="http://www.skymoneyc.com/2014/07/29/2014-07-28-leetcode-solution.html">阅读全文</a></p>
+    <hr style="border-top:1px solid #aaa;">
+  </div>
+	
+	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
+    <h3><a href="http://localhost:4000/2014/07/27/2014-07-10-hmm-viterbi.html">数学之美:HMM学习——解码</a></h3>
+    <p class='muted'>Post On 27 Jul 2014</p>
+    
+      <span class="label label-info blog_tag"><strong>数学</strong></span>
+    
+      <span class="label label-info blog_tag"><strong>HMM</strong></span>
+    
+    <p><strong>摘要:&nbsp;&nbsp;</strong><a href="http://www.skymoneyc.com/2014/07/27/2014-07-10-hmm-viterbi.html">阅读全文</a></p>
+    <hr style="border-top:1px solid #aaa;">
+  </div>
 	
 	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
     <h3><a href="http://localhost:4000/2014/07/26/bs-unicode-error.html">BeautifulSoup下Unicode乱码解决</a></h3>
@@ -119,7 +143,7 @@ $.extend({
 });
 
   window.onload = function(){
-    var dataStr = '{ ' + '"数学": [' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍"}' + '],' + '"HMM": [' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍"}' + '],' + '"感悟": [' + '{"url": "/2014/07/21/about-site.html", "title": "关于本站"}' + '],' + '"数据分析": [' + '{"url": "/2014/07/25/amazon-data-fetch.html", "title": "Amazon电商数据分析——数据获取"}' + '],' + '"bs4": [' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决"}' + '],' + '"python": [' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决"}' + '] }'
+    var dataStr = '{ ' + '"数学": [' + '{"url": "/2014/07/27/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍"}' + '],' + '"HMM": [' + '{"url": "/2014/07/27/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍"}' + '],' + '"感悟": [' + '{"url": "/2014/07/21/about-site.html", "title": "关于本站"}' + '],' + '"数据分析": [' + '{"url": "/2014/07/25/amazon-data-fetch.html", "title": "Amazon电商数据分析——数据获取"}' + '],' + '"bs4": [' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决"}' + '],' + '"python": [' + '{"url": "/2014/07/29/2014-07-28-leetcode-solution.html", "title": "LeetCode解答"}' + ',' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决"}' + '],' + '"LeetCode": [' + '{"url": "/2014/07/29/2014-07-28-leetcode-solution.html", "title": "LeetCode解答"}' + '],' + '"算法": [' + '{"url": "/2014/07/29/2014-07-28-leetcode-solution.html", "title": "LeetCode解答"}' + '] }'
 
   tagName = $.getUrlVar('tag')
   json_data = JSON.parse(dataStr)
