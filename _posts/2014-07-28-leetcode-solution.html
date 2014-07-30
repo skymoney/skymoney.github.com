@@ -1,0 +1,32 @@
+---
+layout: blog
+title: LeetCode解答
+description:
+tags: ['LeetCode', 'python', '算法']
+---
+<div id='mainContent' class='span8'>
+	<h1 class='text-center'>LeetCode解答</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class'text-center'>
+	<span class='font_large'><strong>关键词:</strong></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>LeetCode</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>python</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>算法</span>
+	</span>
+	<hr style="border-top:1px solid #aaa;">
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之前注册了好几个OJ，不过一直没时间来刷，不过最近突然看到LeetCode上支持Python提交，顿时觉得蛮良心的，毕竟目前大部分OJ通常只支持C++和Java，相比这两个，个人Python用了比较多，于是开始闲暇之余刷LeetCode，现整理一些题目的解答，不定期更新。</p>
+	<hr style="border-top:1px solid #aaa;">
+	{% for leet in site.data.leetcode %}
+	<div class='span6'>
+		<p class='blog muted'>{{ leet.title }}</p>
+		<p class=' muted'>{{ leet.description }}</p>
+		<p class='muted pull-left'>解答</p>
+		<img src='{{ site.localurl}}/assets/post_imgs/{{ leet.solution }}'/>
+		<hr style="border-top:1px solid #aaa;">
+	</div>
+	{% endfor %}
+	<div class='span6'>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;</p>
+	<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+	</div>
+</div>
