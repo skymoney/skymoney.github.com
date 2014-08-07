@@ -17,11 +17,15 @@ tags: ['Java']
 	</code>，一般是在<code>%JAVA_HOME%/jre/lib/</code>目录下; 一种是使用J2EE中Apache的库，这个需要导入apache的jar包，还有就是自己实现了，这个会在另一篇Blog中提到。</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面我们使用第一种方法，就是使用SUN内部使用的<code>BASE64Encoder</code>，但是后来发现有一个问题，在Eclipse中<code>rt.jar</code>是禁止使用的，会导致如下后果</p>
 	<img src='{{ site.url }}/assets/post_imgs/base64_1.PNG' />
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后直接报错</p>
+	<pre class=muted>
+	Access restriction: The method encode(byte[]) from the type CharacterEncoder is not accessible due to restriction on required library C:\Program Files (x86)\Java\jre6\lib\rt.jar</pre>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可能因为是SUN内部使用，所以在实际使用中是禁止的。但是可以设置将其启用。</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Eclipse中点击<code>Window</code>,之后是<code>Preference</code>, 选择<code>Java -> Compiler -> Errors/Warnings</code>，如下所示</p>
 	<img class='center' src='{{ site.url }}/assets/post_imgs/base64_2.PNG' />
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之后在右侧面板中选择 <code>
-		Deprecated and restricted API</code>，将<code>Forbidden reference (access rules)</code> 改为<code>Warning</code>，Apply后Eclipse会重新扫描所有项目，之后，<code>rt.jar</code>就可以正常使用。</p>
+		Deprecated and restricted API</code>，将<code>Forbidden reference (access rules)</code> 改为<code>Warning</code>，Apply后Eclipse会重新扫描所有项目，之后，<code>rt.jar</code>就可以正常使用。如下所示</p>
+	<img src='{{ site.url }}/assets/post_imgs/base64_3.PNG' />
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然而，这个方法始终是不大好的，毕竟默认是不推荐使用SUN内部的jar包的，所以更好的方法是自己实现一个BASE64算法和解码编码器。这个会在另一篇Blog中介绍。</p>
 	<div class='span6'>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;</p>
