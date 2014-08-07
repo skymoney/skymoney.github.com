@@ -53,15 +53,23 @@
   
     <li><a href='blog_tab.html?tag=LeetCode'>LeetCode&nbsp;(1)</a></li>
   
-    <li><a href='blog_tab.html?tag=算法'>算法&nbsp;(1)</a></li>
+    <li><a href='blog_tab.html?tag=算法'>算法&nbsp;(2)</a></li>
   
-    <li><a href='blog_tab.html?tag=Java'>Java&nbsp;(1)</a></li>
+    <li><a href='blog_tab.html?tag=Java'>Java&nbsp;(2)</a></li>
   
 </ul>-->
 </div>
 <div id='mainContent' class='span6' style='padding-left: 0px;'>
 	<h1 class='muted'>全部文章</h1>
 	<hr style="border-top:2px solid #aaa;">
+	
+	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
+    <h3><a href="http://localhost:4000/2014/08/07/2014-08-07-base64-algo.html">BASE64算法及实现</a></h3>
+    <p class='muted'>Post On 07 Aug 2014</p>
+    
+    <p><strong>摘要:&nbsp;&nbsp;</strong>最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。<a href="http://www.skymoneyc.com/2014/08/07/2014-08-07-base64-algo.html">阅读全文</a></p>
+    <hr style="border-top:1px solid #aaa;">
+  </div>
 	
 	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
     <h3><a href="http://localhost:4000/2014/08/07/2014-07-10-hmm-viterbi.html">数学之美:HMM学习——解码</a></h3>
@@ -161,7 +169,7 @@ $.extend({
 });
 
   window.onload = function(){
-    var dataStr = '{ ' + '"数学": [' + '{"url": "/2014/08/07/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍"}' + '],' + '"HMM": [' + '{"url": "/2014/08/07/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍"}' + '],' + '"感悟": [' + '{"url": "/2014/07/21/about-site.html", "title": "关于本站"}' + '],' + '"数据分析": [' + '{"url": "/2014/07/25/amazon-rest-plat.html", "title": "Amazon电商数据分析——数据开放平台"}' + ',' + '{"url": "/2014/07/25/amazon-data-fetch.html", "title": "Amazon电商数据分析——数据获取"}' + '],' + '"bs4": [' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决"}' + '],' + '"python": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答"}' + ',' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决"}' + '],' + '"LeetCode": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答"}' + '],' + '"算法": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答"}' + '],' + '"Java": [' + '{"url": "/2014/08/07/base64-ecplise.html", "title": "Eclipse中使用Sun内部Base64算法"}' + '] }'
+    var dataStr = '{ ' + '"数学": [' + '{"url": "/2014/08/07/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍"}' + '],' + '"HMM": [' + '{"url": "/2014/08/07/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍"}' + '],' + '"感悟": [' + '{"url": "/2014/07/21/about-site.html", "title": "关于本站"}' + '],' + '"数据分析": [' + '{"url": "/2014/07/25/amazon-rest-plat.html", "title": "Amazon电商数据分析——数据开放平台"}' + ',' + '{"url": "/2014/07/25/amazon-data-fetch.html", "title": "Amazon电商数据分析——数据获取"}' + '],' + '"bs4": [' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决"}' + '],' + '"python": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答"}' + ',' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决"}' + '],' + '"LeetCode": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答"}' + '],' + '"算法": [' + '{"url": "/2014/08/07/2014-08-07-base64-algo.html", "title": "BASE64算法及实现"}' + ',' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答"}' + '],' + '"Java": [' + '{"url": "/2014/08/07/2014-08-07-base64-algo.html", "title": "BASE64算法及实现"}' + ',' + '{"url": "/2014/08/07/base64-ecplise.html", "title": "Eclipse中使用Sun内部Base64算法"}' + '] }'
 
   tagName = $.getUrlVar('tag')
   json_data = JSON.parse(dataStr)
