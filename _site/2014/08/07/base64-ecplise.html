@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" media='screen' href='../../../../css/site_style.css'>
     <script type="text/javascript" src='../../../../js/jquery-1.9.1.min.js'></script>
     <script type="text/javascript" src='../../../../js/bootstrap.min.js'></script>
-　　<title>LeetCode解答</title>
+　　<title>Eclipse中使用Sun内部Base64算法</title>
 	
 </head>
 <body>
@@ -34,45 +34,27 @@
         </div>
 </div>
   　<div id='mainContent' class='span8'>
-	<h1 class='text-center'>LeetCode解答</h1>
+	<h1 class='text-center'>Eclipse中使用Sun内部Base64算法</h1>
 	<hr style="border-top:1px solid #aaa;">
 	<span class'text-center'>
 	<span class='font_large'><strong>关键词:</strong></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<span class='muted font_large'>LeetCode</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<span class='muted font_large'>python</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<span class='muted font_large'>算法</span>
+	<span class='muted font_large'>Java</span>
 	</span>
 	<hr style="border-top:1px solid #aaa;">
-	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之前注册了好几个OJ，不过一直没时间来刷，不过最近突然看到LeetCode上支持Python提交，顿时觉得蛮良心的，毕竟目前大部分OJ通常只支持C++和Java，相比这两个，个人Python用了比较多，于是开始闲暇之余刷LeetCode，现整理一些题目的解答，不定期更新。</p>
-	<hr style="border-top:1px solid #aaa;">
-	
-	<div class='span6'>
-		<p class='blog muted'>Problem 1: Divide Two Integers</p>
-		<p class=' muted'>Divide two integers without using multiplication, division and mod operator.</p>
-		<p class='muted pull-left'>解答</p>
-		<img src='http://www.skymoneyc.com/assets/post_imgs/leetcode_divide_two_integer.PNG'/>
-		<hr style="border-top:1px solid #aaa;">
-	</div>
-	
-	<div class='span6'>
-		<p class='blog muted'>Problem 2: Reverse Words in String</p>
-		<p class=' muted'>Given an input string, reverse the string word by word.</p>
-		<p class='muted pull-left'>解答</p>
-		<img src='http://www.skymoneyc.com/assets/post_imgs/leetcode_reverse_words_in_string.PNG'/>
-		<hr style="border-top:1px solid #aaa;">
-	</div>
-	
-	<div class='span6'>
-		<p class='blog muted'>Problem 3: Single Number</p>
-		<p class=' muted'>Given an array of integers, every element appears twice except for one. Find that single one.</p>
-		<p class='muted pull-left'>解答</p>
-		<img src='http://www.skymoneyc.com/assets/post_imgs/leetcode_single_number.PNG'/>
-		<hr style="border-top:1px solid #aaa;">
-	</div>
-	
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今天在Coding的时候，遇到一个小问题，关于在Eclipse中使用一些默认禁止访问的Jar包时，会报错。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在编写API的Demo的时候，由于需要BASE64编码字符后发送访问，在Python的Demo中没问题，很简单地搞定。在Java中则遇到一些问题，Java中使用Base64算法有若干种方法，一种是导入<code>jre</code>下的<code>rt.jar
+	</code>，一般是在<code>%JAVA_HOME%/jre/lib/</code>目录下; 一种是使用J2EE中Apache的库，这个需要导入apache的jar包，还有就是自己实现了，这个会在另一篇Blog中提到。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面我们使用第一种方法，就是使用SUN内部使用的<code>BASE64Encoder</code>，但是后来发现有一个问题，在Eclipse中<code>rt.jar</code>是禁止使用的，会导致如下后果</p>
+	<img src='http://www.skymoneyc.com/assets/post_imgs/base64_1.PNG' />
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可能因为是SUN内部使用，所以在实际使用中是禁止的。但是可以设置将其启用。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Eclipse中点击<code>Window</code>,之后是<code>Preference</code>, 选择<code>Java -> Compiler -> Errors/Warnings</code>，如下所示</p>
+	<img class='center' src='http://www.skymoneyc.com/assets/post_imgs/base64_2.PNG' />
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之后在右侧面板中选择 <code>
+		Deprecated and restricted API</code>，将<code>Forbidden reference (access rules)</code> 改为<code>Warning</code>，Apply后Eclipse会重新扫描所有项目，之后，<code>rt.jar</code>就可以正常使用。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然而，这个方法始终是不大好的，毕竟默认是不推荐使用SUN内部的jar包的，所以更好的方法是自己实现一个BASE64算法和解码编码器。这个会在另一篇Blog中介绍。</p>
 	<div class='span6'>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;</p>
-	<p class='muted' style='font-size: 20px;'>Post On 28 Jul 2014 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+	<p class='muted' style='font-size: 20px;'>Post On 07 Aug 2014 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
 	</div>
 </div>
 <div id='footer-wrapper' class='span8'>
