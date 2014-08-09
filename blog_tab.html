@@ -4,13 +4,13 @@ title: 我的博客 | 上善若水
 ---
 <div class='span12'>
 <div id='sideBar' class='span3'>
-  <!--
+  
   <ul class='nav nav-list'>
     <li class='nav-header'> 所有Tag</li>
   {% for tag in site.tags %}
     <li><a href='blog_tab.html?tag={{ tag[0] }}'>{{ tag[0]}}&nbsp;({{ tag | last | size}})</a></li>
   {% endfor %}
-</ul>-->
+</ul>
 </div>
 <div id='mainContent' class='span6' style='padding-left: 0px;'>
 	<h1 class='muted'>全部文章</h1>
@@ -19,7 +19,7 @@ title: 我的博客 | 上善若水
 	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
     <h3><a href="{{ site.localurl }}{{ post.url }}">{{ post.title }}</a></h3>
     <p class='muted'>Post On {{ post.date | date_to_string}}</p>
-    {% for tag in post.tag %}
+    {% for tag in post.tags %}
       <span class="label label-info blog_tag"><strong>{{ tag }}</strong></span>
     {% endfor %}
     <p><strong>摘要:&nbsp;&nbsp;</strong>{{ post.description }}<a href="{{ site.url }}{{ post.url }}">阅读全文</a></p>
@@ -27,7 +27,9 @@ title: 我的博客 | 上善若水
   </div>
 	{% endfor %}
 </div>
-<div class='span3'></div>
+<div class='span3'>
+  <div></div>
+</div>
 </div>
 <script type='text/javascript'>
 $.extend({
@@ -38,7 +40,7 @@ $.extend({
     {
       hash = hashes[i].split('=');
       vars.push(hash[0]);
-      vars[hash[0]] = hash[1];
+      vars[hash[0]] = decodeURI(hash[1]);
     }
     return vars;
   },
@@ -48,21 +50,36 @@ $.extend({
 });
 
   window.onload = function(){
-    var dataStr = '{ {% for t in site.tags %}{% if t[0] != site.tags.first[0] %},{% endif%}' + '"{{ t[0] }}": [{% for post in t[1] %}{% if post != t[1].first %},{% endif %}' + '{"url": "{{post.url}}", "title": "{{ post.title }}"}' + '{% endfor %}]{%endfor%} }'
+    var dataStr = '{ {% for t in site.tags %}{% if t[0] != site.tags.first[0] %},{% endif%}' + '"{{ t[0] }}": [{% for post in t[1] %}{% if post != t[1].first %},{% endif %}' + '{"url": "{{post.url}}", "title": "{{ post.title }}", "description": "{{ post.description }}", "date": "{{ post.date | date_to_string }}"}' + '{% endfor %}]{%endfor%} }'
 
   tagName = $.getUrlVar('tag')
   json_data = JSON.parse(dataStr)
   posts = json_data[tagName]
-
   if(tagName != undefined){
     dom = ''
     for (var i=0; i<posts.length; i++){
-      dom += "<span>" + posts[i]['title'] +"</span>"
+    dom += "<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>" +
+    "<h3><a href='{{ site.localurl }}" + posts[i]['url']+"'>" + posts[i]['title'] + "</a>"+
+    "</h3><p class='muted'>Post On" + posts[i]['date'] + "</p>"
+    +
+    /*
+    "{% for tag in posts[i].tag %}"
+    +
+    "<span class='label label-info blog_tag'><strong>{{ tag }}</strong></span>"
+    +
+    "{% endfor %}"
+    +
+    */
+    "<p><strong>摘要:&nbsp;&nbsp;</strong>" + posts[i]['description']
+    +
+    "<a href='{{ site.url }}" + posts[i]['url']+ "'>阅读全文</a></p>"
+    +
+    "<hr style='border-top:1px solid #aaa;'></div>"
     }
 
     $('#mainContent').html('')
     $('#mainContent').html("<h1 class='muted'>全部文章</h1>" + 
-      "<hr style='border-top:2px olid #aaa;'>" + dom)
+      "<hr style='border-top:2px solid #aaa;'>" + dom)
   }
 }
 </script>
