@@ -39,22 +39,6 @@
   <hr style="border-top:2px solid #aaa;">
   
   <div class='span6'>
-    <h3><a href="http://localhost:4000/2014/08/09/2014-08-07-base64-algo.html">BASE64编码过程及实现</a></h3>
-    <p class='muted'>Post On 09 Aug 2014</p>
-    关键词
-      <span class="label label-info blog_tag">
-        <strong>算法</strong>
-      </span>
-    
-      <span class="label label-info blog_tag">
-        <strong>Java</strong>
-      </span>
-    
-    <p><strong>摘要:&nbsp;&nbsp;</strong>最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。<a href="http://www.skymoneyc.com/2014/08/09/2014-08-07-base64-algo.html">阅读全文</a></p>
-    <hr style="border-top:1px solid #aaa;">
-  </div>
-  
-  <div class='span6'>
     <h3><a href="http://localhost:4000/2014/08/07/2014-07-10-hmm-viterbi.html">数学之美:HMM学习——解码</a></h3>
     <p class='muted'>Post On 07 Aug 2014</p>
     关键词
@@ -79,6 +63,22 @@
       </span>
     
     <p><strong>摘要:&nbsp;&nbsp;</strong>今天在Coding的时候，遇到一个小问题，关于在Eclipse中使用一些默认禁止访问的Jar包时，会报错。<a href="http://www.skymoneyc.com/2014/08/07/base64-ecplise.html">阅读全文</a></p>
+    <hr style="border-top:1px solid #aaa;">
+  </div>
+  
+  <div class='span6'>
+    <h3><a href="http://localhost:4000/2014/08/07/base64-algo.html">BASE64编码过程及实现</a></h3>
+    <p class='muted'>Post On 07 Aug 2014</p>
+    关键词
+      <span class="label label-info blog_tag">
+        <strong>算法</strong>
+      </span>
+    
+      <span class="label label-info blog_tag">
+        <strong>Java</strong>
+      </span>
+    
+    <p><strong>摘要:&nbsp;&nbsp;</strong>最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。<a href="http://www.skymoneyc.com/2014/08/07/base64-algo.html">阅读全文</a></p>
     <hr style="border-top:1px solid #aaa;">
   </div>
   
@@ -143,6 +143,11 @@
 </div>
 -->
 </div>
+<script>
+  $('.blog_tag').click(function(obj){
+    location.href = 'http://www.skymoneyc.com/blog_tab.html?tag=' + $(this).text().trim()
+  })
+</script>
 
 <div id='footer-wrapper' class='span8'>
 	<footer role='contentinfo'>

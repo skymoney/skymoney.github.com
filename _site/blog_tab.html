@@ -35,7 +35,7 @@
 </div>
   　<div class='span12'>
 <div id='sideBar' class='span3'>
-  
+  <!--
   <ul class='nav nav-list'>
     <li class='nav-header'> 所有Tag</li>
   
@@ -57,23 +57,11 @@
   
     <li><a href='blog_tab.html?tag=Java'>Java&nbsp;(2)</a></li>
   
-</ul>
+  </ul>-->
 </div>
 <div id='mainContent' class='span6' style='padding-left: 0px;'>
 	<h1 class='muted'>全部文章</h1>
 	<hr style="border-top:2px solid #aaa;">
-	
-	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
-    <h3><a href="http://localhost:4000/2014/08/09/2014-08-07-base64-algo.html">BASE64编码过程及实现</a></h3>
-    <p class='muted'>Post On 09 Aug 2014</p>
-    
-      <span class="label label-info blog_tag"><strong>算法</strong></span>
-    
-      <span class="label label-info blog_tag"><strong>Java</strong></span>
-    
-    <p><strong>摘要:&nbsp;&nbsp;</strong>最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。<a href="http://www.skymoneyc.com/2014/08/09/2014-08-07-base64-algo.html">阅读全文</a></p>
-    <hr style="border-top:1px solid #aaa;">
-  </div>
 	
 	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
     <h3><a href="http://localhost:4000/2014/08/07/2014-07-10-hmm-viterbi.html">数学之美:HMM学习——解码</a></h3>
@@ -94,6 +82,18 @@
       <span class="label label-info blog_tag"><strong>Java</strong></span>
     
     <p><strong>摘要:&nbsp;&nbsp;</strong>今天在Coding的时候，遇到一个小问题，关于在Eclipse中使用一些默认禁止访问的Jar包时，会报错。<a href="http://www.skymoneyc.com/2014/08/07/base64-ecplise.html">阅读全文</a></p>
+    <hr style="border-top:1px solid #aaa;">
+  </div>
+	
+	<div class='span6 pull-left' style='margin-left: 0px; padding-left: 0px;'>
+    <h3><a href="http://localhost:4000/2014/08/07/base64-algo.html">BASE64编码过程及实现</a></h3>
+    <p class='muted'>Post On 07 Aug 2014</p>
+    
+      <span class="label label-info blog_tag"><strong>算法</strong></span>
+    
+      <span class="label label-info blog_tag"><strong>Java</strong></span>
+    
+    <p><strong>摘要:&nbsp;&nbsp;</strong>最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。<a href="http://www.skymoneyc.com/2014/08/07/base64-algo.html">阅读全文</a></p>
     <hr style="border-top:1px solid #aaa;">
   </div>
 	
@@ -178,8 +178,7 @@
   </div>
 	
 </div>
-<div class='span3'>
-  <div></div>
+<div id='sideBar' class='span3'>
 </div>
 </div>
 <script type='text/javascript'>
@@ -201,7 +200,7 @@ $.extend({
 });
 
   window.onload = function(){
-    var dataStr = '{ ' + '"数学": [' + '{"url": "/2014/08/07/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码", "description": "", "date": "07 Aug 2014"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测", "description": "上一篇讨论了HMM的基本概念和一些性质，HMM在现实中还是比较常见的，因此也带来一了一系列的HMM应用问题。HMM应用主要面向三个方面：预测、解码和学习。这篇主要讨论预测", "date": "10 Jul 2014"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍", "description": "一直想写点关于数学方面的blog，这对于数据挖掘分析，NLP处理等都有着比较重要的作用，之前在CSDN上想写点HMM方面的文章，一直没写成，最近几天终于抽点时间完成了HMM的文章，加以整理，遂有这个系列文章", "date": "10 Jul 2014"}' + '],' + '"HMM": [' + '{"url": "/2014/08/07/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码", "description": "", "date": "07 Aug 2014"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测", "description": "上一篇讨论了HMM的基本概念和一些性质，HMM在现实中还是比较常见的，因此也带来一了一系列的HMM应用问题。HMM应用主要面向三个方面：预测、解码和学习。这篇主要讨论预测", "date": "10 Jul 2014"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍", "description": "一直想写点关于数学方面的blog，这对于数据挖掘分析，NLP处理等都有着比较重要的作用，之前在CSDN上想写点HMM方面的文章，一直没写成，最近几天终于抽点时间完成了HMM的文章，加以整理，遂有这个系列文章", "date": "10 Jul 2014"}' + '],' + '"感悟": [' + '{"url": "/2014/07/21/about-site.html", "title": "关于本站", "description": "这也算是本站的第一篇文章，花了不少时间，主要是大部分时间浪费在了模板的搭建上，本来在GoDaddy上购买了域名，顺带着主机也买了，心想不如就搭在GoDaddy主机上，结果用了一段时间发现很坑爹，大大限制了自己的网站。", "date": "21 Jul 2014"}' + '],' + '"数据分析": [' + '{"url": "/2014/07/25/amazon-rest-plat.html", "title": "Amazon电商数据分析——数据开放平台", "description": "在爬取的数据逐渐有点规模后，我们开始构建一个数据开放平台，这个平台主要目的是将我们的数据通过接口形式公开。", "date": "25 Jul 2014"}' + ',' + '{"url": "/2014/07/25/amazon-data-fetch.html", "title": "Amazon电商数据分析——数据获取", "description": "最近一段时间主要重心在Amazon电商数据分析上，这是一个偏数据分析和可视化的项目。具体来说就是先获取Amazon的商品数据，数据清洗和持久化存储后作为我们自己的数据源。", "date": "25 Jul 2014"}' + '],' + '"bs4": [' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决", "description": "今天在用scrapy爬某个网站的数据，其中DOM解析我用的是BeautifulSoup，速度上没有XPath来得快，不过因为用了习惯了，所以一直用的bs，版本是bs4", "date": "26 Jul 2014"}' + '],' + '"python": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答", "description": "之前注册了好几个OJ，不过一直没时间来刷，不过最近突然看到LeetCode上支持Python提交，顿时觉得蛮良心的，毕竟目前大部分OJ通常只支持C++和Java，相比这两个，个人Python用了比较多，于是开始闲暇之余刷LeetCode，现整理一些题目的解答，不定期更新。", "date": "28 Jul 2014"}' + ',' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决", "description": "今天在用scrapy爬某个网站的数据，其中DOM解析我用的是BeautifulSoup，速度上没有XPath来得快，不过因为用了习惯了，所以一直用的bs，版本是bs4", "date": "26 Jul 2014"}' + '],' + '"LeetCode": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答", "description": "之前注册了好几个OJ，不过一直没时间来刷，不过最近突然看到LeetCode上支持Python提交，顿时觉得蛮良心的，毕竟目前大部分OJ通常只支持C++和Java，相比这两个，个人Python用了比较多，于是开始闲暇之余刷LeetCode，现整理一些题目的解答，不定期更新。", "date": "28 Jul 2014"}' + '],' + '"算法": [' + '{"url": "/2014/08/09/2014-08-07-base64-algo.html", "title": "BASE64编码过程及实现", "description": "最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。", "date": "09 Aug 2014"}' + ',' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答", "description": "之前注册了好几个OJ，不过一直没时间来刷，不过最近突然看到LeetCode上支持Python提交，顿时觉得蛮良心的，毕竟目前大部分OJ通常只支持C++和Java，相比这两个，个人Python用了比较多，于是开始闲暇之余刷LeetCode，现整理一些题目的解答，不定期更新。", "date": "28 Jul 2014"}' + '],' + '"Java": [' + '{"url": "/2014/08/09/2014-08-07-base64-algo.html", "title": "BASE64编码过程及实现", "description": "最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。", "date": "09 Aug 2014"}' + ',' + '{"url": "/2014/08/07/base64-ecplise.html", "title": "Eclipse中使用Sun内部Base64算法", "description": "今天在Coding的时候，遇到一个小问题，关于在Eclipse中使用一些默认禁止访问的Jar包时，会报错。", "date": "07 Aug 2014"}' + '] }'
+    var dataStr = '{ ' + '"数学": [' + '{"url": "/2014/08/07/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码", "description": "", "date": "07 Aug 2014"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测", "description": "上一篇讨论了HMM的基本概念和一些性质，HMM在现实中还是比较常见的，因此也带来一了一系列的HMM应用问题。HMM应用主要面向三个方面：预测、解码和学习。这篇主要讨论预测", "date": "10 Jul 2014"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍", "description": "一直想写点关于数学方面的blog，这对于数据挖掘分析，NLP处理等都有着比较重要的作用，之前在CSDN上想写点HMM方面的文章，一直没写成，最近几天终于抽点时间完成了HMM的文章，加以整理，遂有这个系列文章", "date": "10 Jul 2014"}' + '],' + '"HMM": [' + '{"url": "/2014/08/07/2014-07-10-hmm-viterbi.html", "title": "数学之美:HMM学习——解码", "description": "", "date": "07 Aug 2014"}' + ',' + '{"url": "/2014/07/10/hmm-predict.html", "title": "数学之美: HMM学习——预测", "description": "上一篇讨论了HMM的基本概念和一些性质，HMM在现实中还是比较常见的，因此也带来一了一系列的HMM应用问题。HMM应用主要面向三个方面：预测、解码和学习。这篇主要讨论预测", "date": "10 Jul 2014"}' + ',' + '{"url": "/2014/07/10/hmm-intro.html", "title": "数学之美：HMM学习——介绍", "description": "一直想写点关于数学方面的blog，这对于数据挖掘分析，NLP处理等都有着比较重要的作用，之前在CSDN上想写点HMM方面的文章，一直没写成，最近几天终于抽点时间完成了HMM的文章，加以整理，遂有这个系列文章", "date": "10 Jul 2014"}' + '],' + '"感悟": [' + '{"url": "/2014/07/21/about-site.html", "title": "关于本站", "description": "这也算是本站的第一篇文章，花了不少时间，主要是大部分时间浪费在了模板的搭建上，本来在GoDaddy上购买了域名，顺带着主机也买了，心想不如就搭在GoDaddy主机上，结果用了一段时间发现很坑爹，大大限制了自己的网站。", "date": "21 Jul 2014"}' + '],' + '"数据分析": [' + '{"url": "/2014/07/25/amazon-rest-plat.html", "title": "Amazon电商数据分析——数据开放平台", "description": "在爬取的数据逐渐有点规模后，我们开始构建一个数据开放平台，这个平台主要目的是将我们的数据通过接口形式公开。", "date": "25 Jul 2014"}' + ',' + '{"url": "/2014/07/25/amazon-data-fetch.html", "title": "Amazon电商数据分析——数据获取", "description": "最近一段时间主要重心在Amazon电商数据分析上，这是一个偏数据分析和可视化的项目。具体来说就是先获取Amazon的商品数据，数据清洗和持久化存储后作为我们自己的数据源。", "date": "25 Jul 2014"}' + '],' + '"bs4": [' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决", "description": "今天在用scrapy爬某个网站的数据，其中DOM解析我用的是BeautifulSoup，速度上没有XPath来得快，不过因为用了习惯了，所以一直用的bs，版本是bs4", "date": "26 Jul 2014"}' + '],' + '"python": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答", "description": "之前注册了好几个OJ，不过一直没时间来刷，不过最近突然看到LeetCode上支持Python提交，顿时觉得蛮良心的，毕竟目前大部分OJ通常只支持C++和Java，相比这两个，个人Python用了比较多，于是开始闲暇之余刷LeetCode，现整理一些题目的解答，不定期更新。", "date": "28 Jul 2014"}' + ',' + '{"url": "/2014/07/26/bs-unicode-error.html", "title": "BeautifulSoup下Unicode乱码解决", "description": "今天在用scrapy爬某个网站的数据，其中DOM解析我用的是BeautifulSoup，速度上没有XPath来得快，不过因为用了习惯了，所以一直用的bs，版本是bs4", "date": "26 Jul 2014"}' + '],' + '"LeetCode": [' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答", "description": "之前注册了好几个OJ，不过一直没时间来刷，不过最近突然看到LeetCode上支持Python提交，顿时觉得蛮良心的，毕竟目前大部分OJ通常只支持C++和Java，相比这两个，个人Python用了比较多，于是开始闲暇之余刷LeetCode，现整理一些题目的解答，不定期更新。", "date": "28 Jul 2014"}' + '],' + '"算法": [' + '{"url": "/2014/08/07/base64-algo.html", "title": "BASE64编码过程及实现", "description": "最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。", "date": "07 Aug 2014"}' + ',' + '{"url": "/2014/07/28/leetcode-solution.html", "title": "LeetCode解答", "description": "之前注册了好几个OJ，不过一直没时间来刷，不过最近突然看到LeetCode上支持Python提交，顿时觉得蛮良心的，毕竟目前大部分OJ通常只支持C++和Java，相比这两个，个人Python用了比较多，于是开始闲暇之余刷LeetCode，现整理一些题目的解答，不定期更新。", "date": "28 Jul 2014"}' + '],' + '"Java": [' + '{"url": "/2014/08/07/base64-ecplise.html", "title": "Eclipse中使用Sun内部Base64算法", "description": "今天在Coding的时候，遇到一个小问题，关于在Eclipse中使用一些默认禁止访问的Jar包时，会报错。", "date": "07 Aug 2014"}' + ',' + '{"url": "/2014/08/07/base64-algo.html", "title": "BASE64编码过程及实现", "description": "最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。", "date": "07 Aug 2014"}' + '] }'
 
   tagName = $.getUrlVar('tag')
   json_data = JSON.parse(dataStr)
