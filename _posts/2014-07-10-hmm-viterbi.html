@@ -1,11 +1,11 @@
 ---
 layout: blog
-title: '数学之美:HMM学习——解码'
+title: '数学之美:HMM学习——解码&Viterbi算法'
 description: 前面讨论了HMM模型一个基本应用——预测，现在又遇到了一个新的问题，如果给定HMM模型和观察序列，而且这个观察序列已经确定，那么是怎么样的隐藏状态序列最有可能得到观察序列，这就是HMM模型应用的第二个方面——解码，解码意思估计是说观察状态序列对应一个加密序列，隐藏状态序列对应实际序列，这样这个过程算是一个解码过程。
 tag: ['数学', 'HMM']
 ---
 <div id='mainContent' class='span8'>
-	<h1>数学之美:HMM学习——解码</h1>
+	<h1>数学之美:HMM学习——解码&Viterbi算法</h1>
 	<hr style="border-top:1px solid #aaa;">
 	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<span class='muted font_large'>数学</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -40,7 +40,7 @@ tag: ['数学', 'HMM']
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		Pr(最可能路径概率)=Pr(到达状态A的最可能路径)*Pr(X|A)*Pr(观察状态|X)</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这样，对于所有可能的路径，最有可能的序列是：</p>
-	<img src='{{ site.url }}/assets/post_imgs/hmm_viterbi/8.ng' />
+	<img src='{{ site.url }}/assets/post_imgs/hmm_viterbi/8.png' />
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上述公式中，右侧第一项是t=i-1时刻的局部概率，第二项是转移概率，第三项是观察概率(混淆概率)，左侧就是t=i时刻的局部概率。可见，这是递归求得的。</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;概括成更一般的模型就是：</p>
 	<img src='{{ site.url }}/assets/post_imgs/hmm_viterbi/9.png' />

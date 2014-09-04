@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
     <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
     <script type="text/javascript" src='/js/bootstrap.min.js'></script>
-　　<title>数学之美: HMM学习——预测</title>
+　　<title>数学之美: HMM学习——预测&Forword算法</title>
 </head>
 <body>
 	<div class='navbar navbar-inverse navbar-fixed-top'>
@@ -33,7 +33,7 @@
         </div>
 </div>
   　<div id='mainContent' class='span9'>
-	<h1 class='text-center'>数学之美:HMM学习——预测</h1>
+	<h1 class='text-center'>数学之美:HMM学习——预测&Forward算法</h1>
 	<hr style="border-top:1px solid #aaa;">
 	<span class'text-center'>
 	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -46,7 +46,7 @@
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先对于给定的HMM和观察序列，第一反应当然是穷举搜索，不妨假设模型为λ, 观察序列为O，那么问题就是求P(O|λ), 显然，我们不知道隐藏状态序列，假设隐藏序列为Q，那么则有：</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可见，这样的计算方式虽然是可行的，但是太繁琐，如果模型较复杂或者观察序列比较长，那么会陷入比较繁重的计算中，这个时候，就需要引入一个比较优化的算法，这就是Forward算法，即前向算法。</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先先引入局部概率的概念，如下图所示：</p>
-	<img src='../../../../imgs/hmm_predict_1.png'></img>
+	<img src='../../../../imgs/hmm_predict_1.png' ></img>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T+1时刻某一状态的发生概率依赖于之前时刻状态的概率，并且仅依赖于能够达到T+1时刻该状态的路径上的状态，因此，就不需要计算T时刻所有的状态，而仅仅计算可能路径上的状态。</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于计算某一时刻观察到某一状态的局部概率应该是如下公式：</p>
 	<img src='../../../../imgs/hmm_predict_2.png'></img>
