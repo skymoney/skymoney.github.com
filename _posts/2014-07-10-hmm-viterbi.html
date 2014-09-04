@@ -57,6 +57,8 @@ tag: ['数学', 'HMM']
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h3>小结</h3></p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viterbi算法主要提供了一个有效的计算方法来分析HMM观察序列的最有可能隐藏序列，通过引入局部概率，可以递归求解，这样减少了计算量。同时，因为Viterbi分析了整个上下文，这样也能很好地对包含“噪音”的序列进行分析。</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在实际使用中，一般步骤是从初始时刻开始，计算每一个局部概率，在完成计算后，根据反向指针回溯到初始时刻，最终得到最有可能的隐藏序列。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面给出了Viterbi算法的python实现，具体github地址可点击：</p>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://github.com/skymoney/HMM_Impl' class='text-center font_large'>https://github.com/skymoney/HMM_Impl</a><br/><br/>
 	<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
 	</div>
 </div>
