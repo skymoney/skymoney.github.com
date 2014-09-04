@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='../../../../css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='../../../../css/site_style.css'>
+    <script type="text/javascript" src='../../../../js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='../../../../js/bootstrap.min.js'></script>
+　　<title>Amazon电商数据分析——数据开放平台</title>
+	
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id='mainContent', class='span8'>
+	<h1 class='text-center'>Amazon电商数据分析——数据开放平台</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class'text-center'>
+	<span class='font_large'><strong>关键词:</strong></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>数据分析</span>
+	</span>
+	<hr style="border-top:1px solid #aaa;">
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在爬取的数据逐渐有点规模后，我们开始构建一个数据开放平台，这个平台主要目的是将我们的数据通过接口形式公开。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一开始一想到这个，第一反应是构建一个新的项目绝不用Django了，Django很不错，说其为Python中最成熟的Web框架也不为过，但是很重，类似这样的一个开放平台不需要很多的框架约束，轻量级的即可，因此Flask是一个选择。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其次闪过的反应是格式，因为用过一些开放平台，大体上数据传输格式有两种——XML和JSON，XML算是一个比较老也比较成熟的格式了，但是比较繁琐，JSON比较轻，同时适合比较好的压缩需求，因此，我们的平台传输格式目前支持JSON，XML如果有可能的话后期会加入。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，是一些其他问题，例如访问控制，安全控制等。这些在下面的讨论中都会有提到。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;框架决定后，下面要考虑的就是整体的架构。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于之前没有过开放平台的部署经历，一切都是未知的，所以也就按照之前开发网站的步骤来，只不过将最后返回的页面改成数据即可。但是和一般网站不同的是，数据开放平台的访问量会很大，因为是代码访问，这一点在开始没考虑周全，也导致了后来遇到的一些性能问题。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于提供的是电商数据，所以针对电商数据要进行一些接口设计，例如获取商品的所有分类，某一个分类下的数据，单个商品的价格、评论数据等等。例如获取全部分类，返回的数据格式就为：</p>
+	<pre>
+{‘status’: ‘ok’, ‘data’: [
+	{
+      "name": "Beauty>Bath & Body>Bath"
+    },  # more
+	]
+}
+
+	</pre>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;整个平台的数据格式均为JSON格式。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设计好几个接口，编码实现，这些都很简单，和之前的python Web项目类似，本地测试，部署。值得一提的是，由于我们数据库采用的是MongoDB，数据存储在MongoDB中，所以在查询等操作中有的比较耗时，有的则比较快。这也导致了不同接口对于请求的响应时间有所不同。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在部署方面我们采用的是Nginx作为服务器。部署方式就是Nginx+uWsgi+Flask，具体可以google，这类的blog文章有很多。最初的时候，是单端口部署后直接访问，而且nginx中没有开启gzip压缩，所以开始跑了一个简单的压力测试，发现请求多后大部分都是bad request，在简单的请求这是可以使用的，但是一旦请求数上来后就开始出现问题。这一点在后来的统计作业中也出现了。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面说下开放平台遇到的几个问题和接下来需要考虑的几点。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;性能问题：</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个是最初就该考虑的问题，不同于一般的网站，接口访问是一个重复并且高并发的过程，其实Nginx的性能是挺好的，不过最初没有利用起来。一开始只是最简单的单端口配置，只是将Time out设了比较长点，浏览器中访问请求的响应时间比较长，程序中则大概是一到两分钟响应。后面出现访问事故，大部分请求无法响应。后来想到了负载均衡和Cache，这算是一个性价比比较高的解决方案。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于是只有一台机器，负载均衡在一台机器上的搭建只是通过分配若干端口来实现对请求的分流，可能没有实际的多机器负载均衡有效，但目前来看足够容纳较多的请求。此外，还加入了Cache，目前是根据IP进行轮询，第一次访问后，后面访问如果命中则会快速返回，这在我们的实际试验中达到了比较好的效果。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Nginx中，还启用了gzip压缩，开始的版本中，gzip没有启用，一个可能是配置文件中没有指定，一个可能是因为Nginx会自动根据返回数据大小来决定是否启用gzip压缩，在后来的版本中，显式在配置文件中指定了gzip压缩，返回数据通过gzip减少了传输大小，但是需要在客户端解析的时候注意一下对gzip压缩数据的转换。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过以上的一些优化（负载均衡+Cache+gzip），基本对于一般数量的并发请求都可以做到比较好的响应。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格式美观性：</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个虽然无关痛痒，但是也算是一个问题，出现在浏览器查看上，最初由于数据压缩后直接通过Response内容返回，虽然在程序中可以使用，但是在浏览器中看的话比较痛苦，之后稍微修改了一下，通过Flask自带的JSON传输替代了原先的Python内置JSON库，这样效果好了点。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;针对开放数据平台，还有额外的一些工具，例如我们使用了MoinMoin作为一个Wiki，发布平台相关的API接口说明，不过可能不是特别熟，样式排版什么的和其他的API说明不大一样，后面考虑还是另外搭一个大众化的API说明系统。还有根据Nginx以及uWsgi的用户访问日志来弄了一个监控系统，查看每天的平台流量。这些都是作为开放平台的一部分出现的。</p>
+	<p class='muted' style='font-size: 20px;'>Post On 25 Jul 2014 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>

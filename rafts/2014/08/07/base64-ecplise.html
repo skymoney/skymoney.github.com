@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='../../../../css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='../../../../css/site_style.css'>
+    <script type="text/javascript" src='../../../../js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='../../../../js/bootstrap.min.js'></script>
+　　<title>Eclipse中使用Sun内部Base64算法</title>
+	
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id='mainContent' class='span8'>
+	<h1 class='text-center'>Eclipse中使用Sun内部Base64算法</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class'text-center'>
+	<span class='font_large'><strong>关键词:</strong></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>Java</span>
+	</span>
+	<hr style="border-top:1px solid #aaa;">
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今天在Coding的时候，遇到一个小问题，关于在Eclipse中使用一些默认禁止访问的Jar包时，会报错。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在编写API的Demo的时候，由于需要BASE64编码字符后发送访问，在Python的Demo中没问题，很简单地搞定。在Java中则遇到一些问题，Java中使用Base64算法有若干种方法，一种是导入<code>jre</code>下的<code>rt.jar
+	</code>，一般是在<code>%JAVA_HOME%/jre/lib/</code>目录下; 一种是使用J2EE中Apache的库，这个需要导入apache的jar包，还有就是自己实现了，这个会在另一篇Blog中提到。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面我们使用第一种方法，就是使用SUN内部使用的<code>BASE64Encoder</code>，但是后来发现有一个问题，在Eclipse中<code>rt.jar</code>是禁止使用的，会导致如下后果</p>
+	<img src='http://www.skymoneyc.com/assets/post_imgs/base64_1.PNG' />
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后直接报错</p>
+	<pre class=muted>
+	Access restriction: The method encode(byte[]) from the type CharacterEncoder is not accessible due to restriction on required library C:\Program Files (x86)\Java\jre6\lib\rt.jar</pre>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可能因为是SUN内部使用，所以在实际使用中是禁止的。但是可以设置将其启用。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Eclipse中点击<code>Window</code>,之后是<code>Preference</code>, 选择<code>Java -> Compiler -> Errors/Warnings</code>，如下所示</p>
+	<img class='center' src='http://www.skymoneyc.com/assets/post_imgs/base64_2.PNG' />
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之后在右侧面板中选择 <code>
+		Deprecated and restricted API</code>，将<code>Forbidden reference (access rules)</code> 改为<code>Warning</code>，Apply后Eclipse会重新扫描所有项目，之后，<code>rt.jar</code>就可以正常使用。如下所示</p>
+	<img src='http://www.skymoneyc.com/assets/post_imgs/base64_3.PNG' />
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然而，这个方法始终是不大好的，毕竟默认是不推荐使用SUN内部的jar包的，所以更好的方法是自己实现一个BASE64算法和解码编码器。这个会在另一篇Blog中介绍。</p>
+	<div class='span6'>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;</p>
+	<p class='muted' style='font-size: 20px;'>Post On 07 Aug 2014 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+	</div>
+</div>
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>

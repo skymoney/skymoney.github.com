@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='../../../../css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='../../../../css/site_style.css'>
+    <script type="text/javascript" src='../../../../js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='../../../../js/bootstrap.min.js'></script>
+　　<title>BASE64编码过程及实现</title>
+	
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id='mainContent' class='span8'>
+	<h1 class='text-center'>BASE64编码过程及实现</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class'text-center'>
+	<span class='font_large'><strong>关键词:</strong></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>算法</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>Java</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>
+	<hr style="border-top:1px solid #aaa;">
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最近由于搭建API平台的认证部分，所以对一些基本的Http Auth有一些接触，其中有一个比较简答有效的认证，就是Http Basic Auth，相比较无认证和OAuth认证，Basic Auth既简单又有效，当然属于“防君子不防小人”，加密的密文本质还是明文，只是人眼不可辨认而已。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Basic Auth中，数据首先通过某算法重组合成一系列字符串，经过Http请求发送后在服务器端被解析并认证。从这过程中我们可以发现，这个组合过程是双向可逆的，意味着那些虽然很安全(一般意义上)但不可逆的加密算法是不可行的，譬如md5，sha1等。这里引入的就是Base64编码。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Base64</strong>是基于64个可打印字符来表示二进制数据的表示方法。由于<code>2^6 = 64</code>，所以每6个比特为一个单元，每个单元补齐成8比特后对应带映射表中，最终得到Base64字符串。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体来说，Base64编码由如下几个步骤：</p>
+	<ol class='blog'>
+		<li class='blog'>对于待编码字符串划分为每三个字节为一组,每组24个二进制位。</li>
+		<li class='blog'>将这24个二进制位划分为4组6比特位。</li>
+		<li class='blog'>对于每个6比特位，最高位前补齐两个0，补为8比特位。</li>
+		<li class='blog'>根据下面给出的映射表，每个补齐后的8比特位可以对应到一个字符，最终得到编码后的字符</li>
+	</ol>
+	<pre>
+　0　A　　 17　R　　　34　i　　　51　z
+　1　B　　 18　S　　　35　j　　　52　0
+　2　C　　 19　T　　　36　k　　　53　1
+　3　D　　 20　U　　　37　l　　　54　2
+　4　E　　 21　V　　　38　m　　　55　3
+　5　F　　 22　W　　　39　n　　　56　4
+　6　G　　 23　X　　　40　o　　　57　5
+　7　H　　 24　Y　　　41　p　　　58　6
+　8　I　　 25　Z　　　42　q　　　59　7
+　9　J　　 26　a　　　43　r　　　60　8
+　10　K　　27　b　　　44　s　　　61　9
+　11　L　　28　c　　　45　t　　　62　+
+　12　M　　29　d　　　46　u　　　63　/
+　13　N　　30　e　　　47　v
+　14　O　　31　f　　　48　w　　　
+　15　P　　32　g　　　49　x
+　16　Q　　33　h　　　50　y
+	</pre>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;举个实际例子来说，对于一般Http Basic Auht中，形如 <code>name:pwd</code>的格式，有一个例子<code>k:v</code>，
+		那么可以作如下编码</p>
+	<pre class='blog'>
+1，k:v 一共三个字符，对应的ASCII编码值为107 58 118， 转换成二进制即为
+    01101011，00111010，01110110
+2，以上得到的三个字节划分为四个6比特组，得到 011010, 110011, 101001, 110110 
+3，得到的4个6比特组分别最高为补位，得到 00011010, 00110011, 00101001, 00110110
+4，根据得到的值得到对应的十进制值，并查找映射表，得到最终的Base64编码，如本例中为26，51，41，54，则对应的Base64编码为 <strong>azp2</strong>
+	</pre>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;那么对于可能不满三字节的情况呢，主要有两种情况</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一种是多出来一个字节，那么对于这个字节，前6个比特位一组，后2个添加4个0后组成一个6比特组，后面再添加两个<code>=</code>作为补位，例如<code>A</code>一个字节，转化为二进制就是 01000001，划分为 010000，010000，补位00010000，00010000，映射得到16，16，得到QQ，添加==得到 <strong>QQ==</strong>，这就是<code>A</code>的Base64编码</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;另一种则是多出来两个字节，那么就是16个比特位，前12个划分为两组6比特位，后4个末尾加两个0组成一个6比特位，有3个6比特位，最后添加一个<code>=</code>作为补位。例如<code>Aa</code>两个字节，转化为二进制就是 01000001, 01100001, 划分并补位 00010000， 00010110， 00000100，得到QWE，最后加一个=补位，最终为 <strong>QWE=</strong></p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;还有就是非ASCII编码。例如汉字怎么办，例如汉字“程”，由于汉字有不同编码，例如utf-8，gbk等等，不同编码的Base64也不一样，这里以UTF-8为例，“程”的UTF-8编码为<code>
+		\xE7\xA8\x8B</code>，转为二进制就是11100111 10101000 10001011，按照上面的步骤得到最终的Base64编码为<strong>56iL</strong></p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在多个语言中，有不少是已有的Base64实现，例如Python，自带有base64模块，对于Java，在另一篇Blog中提到Java有多个方式实现Base64编码，但都不算特别方便，因此这里给出一个Java版本的Base64编码的实现。</p>
+	<p class='blog text-center'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;点击<a href="">Code On Github</a>查看代码。</p>
+	<p class='muted' style='font-size: 20px;'>Post On 07 Aug 2014 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>
