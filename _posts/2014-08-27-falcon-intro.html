@@ -1,0 +1,51 @@
+---
+layout: blog
+title: Falcon构建轻量级API
+description: 
+tags: ['python']
+---
+<div id='mainContent' class='span8'>
+	<h1 class='text-center'>{{ page.title }}</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>python</span>
+	<hr style="border-top:1px solid #aaa;">
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最近由于做了不少API搭建相关的工作，所以对这方面也比较关注，之前一直用的是Flask作为API框架，今天突然看到另一个专门用来搭建API的框架——Falcon，感觉眼前一亮，觉得这货看起来比较好玩，遂看看。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Falcon是一个基于Python的轻量级Web Framework，主要用来构建API等。官网宣称是 “minimalist WSGI library for building speedy web APIs and app backends”，更直接的是，falcon通过HTTP构建REST风格的接口，移除了其他不必要的依赖，库等。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下图是一个benchmark，用来证明falcon在API吞吐量等指标上和其他一些框架的对比(Flask华丽丽地垫底)
+	</p>
+	<img src='{{ site.url }}/assets/post_imgs/falcon/benchmark.png' />
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装什么的就很简单了，pip安装或者xcode安装(针对OS X用户)，注意falcon建议是运行在cython上，保证速度，但是实际使用原生的python也是可以的，只是速度会略降一点。</p>
+	<img src='{{ site.url }}/assets/post_imgs/falcon/install.png' />
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装完成后，可以通过一个小的Demo来了解一下Falcon：</p>
+	<code>
+#-*- coding:utf-8 -*-
+
+import falcon
+
+class ThingsResource:
+	def on_get(self, req, resp):
+		params = req.get_param('page')
+		resp.status = falcon.HTTP_200
+
+		resp.body = ("Test for falcon" + params)
+
+app = falcon.API()
+
+things = ThingsResource()
+
+app.add_route('/things', things)
+	</code>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以发现，这个其实是一个WSGI程序，和Flask类似。但是和Flask不同的是，Falcon关注REST API搭建，因此减去了template的使用，同时，加入了Resource的概念，每一个Resource对应服务器上的一类数据，在搭建中具体实现表现为一个Class，在这个Class中，定义了数据获取、修改等操作。之后，实例化该Class，用作配置URL route，规定访问的一系列url对应此Resource。此外，还可以配置返回的mime类型，认证等一系列需要的组件。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面介绍Falcon中的一些概念：</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h3>Resource</h3></p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resource借用了REST中的一些概念，主要对需要处理的资源进行统一管理，包括数据库的交互、数据处理等。同时，对Client开放，提供必要的访问接口。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Resource中，实现了基本的HTTP方法，通过 on_x 来调用，例如，GET方法就是在 on_get 中实现，目前基本的HTTP都可以（GET，POST，PUT等），这些常用方法被称为“responder”， responder接受至少两个参数，Request和Response，代表对这个方法的HTTP请求和HTTP返回，通常以 req和resp表示。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在responder中，还可以更改content-type，默认的是 application/json，可以根据使用场景自行更改。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h3>Request & Response</h3></p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;responder中至少有两个参数，一个是Request，另一个是Response，分别代表了针对某个responder的请求和响应。这两个的用法和大部分web framework中的类似，需要注意的是，在Falcon中，request请求中的数据是直接以流形式传输，即 req.stream获取数据，这点特别是在POST请求中需要注意。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h3>Hooks</h3></p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hook主要用来对一些请求或响应做预处理，确保可以应用一些定义好的规则。例如，在一个上传文件的API中，如果是限定文件格式，那么hook就可以发挥作用。其实在具体实现中，hook是通过python中的decorator来实现的，用于处理请求发送前或发送后等情况。</p>
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体的例子就不详细说了，官方文档中都由详细的说明。</p>
+	<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>
