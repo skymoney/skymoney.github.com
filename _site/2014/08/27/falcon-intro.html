@@ -1,11 +1,39 @@
----
-layout: blog
-title: Falcon构建轻量级API
-description: 最近由于做了不少API搭建相关的工作，所以对这方面也比较关注，之前一直用的是Flask作为API框架，今天突然看到另一个专门用来搭建API的框架——Falcon，感觉眼前一亮，觉得这货看起来比较好玩，遂看看
-tags: ['python']
----
-<div id='mainContent' class='span8'>
-	<h1 class='text-center'>{{ page.title }}</h1>
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='/js/bootstrap.min.js'></script>
+　　<title>Falcon构建轻量级API</title>
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id='mainContent' class='span8'>
+	<h1 class='text-center'>Falcon构建轻量级API</h1>
 	<hr style="border-top:1px solid #aaa;">
 	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<span class='muted font_large'>python</span>
@@ -14,9 +42,9 @@ tags: ['python']
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Falcon是一个基于Python的轻量级Web Framework，主要用来构建API等。官网宣称是 “minimalist WSGI library for building speedy web APIs and app backends”，更直接的是，falcon通过HTTP构建REST风格的接口，移除了其他不必要的依赖，库等。</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下图是一个benchmark，用来证明falcon在API吞吐量等指标上和其他一些框架的对比(Flask华丽丽地垫底)
 	</p>
-	<img src='{{ site.url }}/assets/post_imgs/falcon/benchmark.png' />
+	<img src='http://www.skymoneyc.com/assets/post_imgs/falcon/benchmark.png' />
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装什么的就很简单了，pip安装或者xcode安装(针对OS X用户)，注意falcon建议是运行在cython上，保证速度，但是实际使用原生的python也是可以的，只是速度会略降一点。</p>
-	<img src='{{ site.url }}/assets/post_imgs/falcon/install.png' />
+	<img src='http://www.skymoneyc.com/assets/post_imgs/falcon/install.png' />
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装完成后，可以通过一个小的Demo来了解一下Falcon：</p>
 	<pre>
 <code>
@@ -48,5 +76,13 @@ app.add_route('/things', things)</code>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h3>Hooks</h3></p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hook主要用来对一些请求或响应做预处理，确保可以应用一些定义好的规则。例如，在一个上传文件的API中，如果是限定文件格式，那么hook就可以发挥作用。其实在具体实现中，hook是通过python中的decorator来实现的，用于处理请求发送前或发送后等情况。</p>
 	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体的例子就不详细说了，官方文档中都由详细的说明。</p>
-	<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+	<p class='muted' style='font-size: 20px;'>Post On 27 Aug 2014 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
 </div>
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>
