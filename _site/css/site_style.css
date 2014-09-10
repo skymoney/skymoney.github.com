@@ -35,4 +35,9 @@
 
 .widget {
 	padding-top: 15%;
+	position: fixed;
+}
+
+#weibo_tool {
+	position: fixed;
 }

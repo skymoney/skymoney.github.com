@@ -35,4 +35,13 @@
 
 .widget {
 	padding-top: 15%;
+	position: fixed;
+}
+
+.self-card {
+	margin-left: 30px;
+}
+
+.wechat {
+	position: fixed;
 }
