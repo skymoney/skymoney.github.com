@@ -38,6 +38,11 @@
 	position: fixed;
 }
 
-#weibo_tool {
+.self-card {
+	margin-left: 30px;
+}
+
+.wechat {
+	margin-top: 100px;
 	position: fixed;
 }
