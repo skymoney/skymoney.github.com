@@ -1,0 +1,84 @@
+---
+layout: blog
+title: 一步步搭建Git Server
+tags: ['git']
+description: 最近因为项目需要搭建一个vcs，目前主流的vcs基本就是svn和git两家，而且git隐隐有一家独大的趋势，于是先从git入手，而且svn已经有不少成熟的类似一键搭建的玩意，就暂时不看
+---
+<div>
+	<h1 class='text-center'>2014总结——读书篇</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>感悟</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最近因为项目需要搭建一个vcs，目前主流的vcs基本就是svn和git两家，而且git隐隐有一家独大的趋势，于是先从git入手，而且svn已经有不少成熟的类似一键搭建的玩意，就暂时不看。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git最有名的托管网站当然是github，可以说是码农们的聚集地，不过我们不是在这上面搭建，而且github如果需要用户加入一个repo，需要用户的rsa key，不是很方便。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果需要自己搭建git sever，那就需要一些时间了。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，需要安装了git，旧的版本是git-core,防止和 GIT(GNU Interactive Tools)冲突，不过，git因为更有名，现在统一是git。一般来说，在*nix机器上这个都是预装好的。</p>
+
+<h3 class='blog'>Step 1——基于本机文件系统的Git Server</h3>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们先搭建一个本地环境下的git repo，这个很简单，选定一个目录作为git repo的根目录，新建一个repo，并按照如下命令初始化</p>
+
+<img src='{{ site.url }}/assets/post_imgs/git_server/git_init.png' />
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>git init</code> 用来初始化一个git repo， bare选项用来表示初始化为一个裸仓库，不包含代码等文件，而是记录hook，refs等文件。一般来说，git server上一个bare repo作为一个公共的repo。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;初始化好了之后，就可以clone或pull了，我们在另一个目录下clone出这个repo</p>
+
+<img src='{{ site.url }}/assets/post_imgs/git_server/git_clone.png' />
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注意，这里会提示是一个空的repo，因为在初始化的时候的确是一个空的repo，所以下面我们加点文件到repo中并commit，最后push</p>
+
+<img src='{{ site.url }}/assets/post_imgs/git_server/git_push.png' />
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到，基本本机文件系统的git server搭建完成，不过这个只是“本机”环境，什么都做不了，因此，下面我们需要结合Web Server来搭建一个真正的git server。</p>
+
+<h3 class='blog'>Step 2——基于Web Server的Git Server</h3>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git支持多种协议，如下</p>
+
+<ul>
+<li><p>ssh</p>
+
+<p>  这是最常见的一个安全协议，启用后，用户可以通过 <code>ssh://user@gitserver/repo</code> 的形式来访问项目。</p></li>
+<li><p>git</p>
+
+<p>  这是基于ssh的git独有的一个协议，启用后，用户通过 <code>git://user@gitserevr/repo</code>的形式来访问项目，这个协议比较快速</p></li>
+<li><p>http(s)</p>
+
+<p>  这个比较熟悉，就是通过http(s)协议来访问repo，比较简单但比较慢</p></li>
+</ul>
+
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面，我们就用Apache+Git来搭建一个基于http协议的git server，为什么是Apache呢，因为Nginx搭建比较麻烦，还需要编译一些模块，而Apache则比较方便，默认是加载mod_svn 模块的。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在apache的conf文件中加入git的conf文件，主要是要配置git repo的目录，监听端口等，下面是一个样例配置文件</p>
+
+<img src='{{ site.url }}/assets/post_imgs/git_server/git_apache_conf.png' />
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配置完成后，重启apache，然后在Git_Repo_Root 下按step 1中的步骤建立一个空的repo，就可以通过 http://servername:8555/&lt;repo_name> 来clone出项目了</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当然，仅仅这样是不行的，任何用户，包括匿名用户，都有相同的权限，所以我们需要加入认证控制。</p>
+
+<h3 class='blog'>Step 3——加入认证控制</h3>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目前大部分自建git server都是通过文件来定义用户和密码，这样做的一个缺点是用户对所有的repo都有相同的权限，而且每次更新用户都要手动修改文件，而我们的需求是对于某一个用户，可以访问某一个repo，而不能访问其他无权限的repo，所以需要自己定义认证方法，这里我们引入了apache的一个自定义模块，通过这个模块，我们可以使用用户名密码来进行权限认证。如下加入apache的模块</p>
+
+<img src='{{ site.url }}/assets/post_imgs/git_server/git_auth_conf.png' />
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以上加入到apache的配置后，再进行auth的配置。这是git 认证配置</p>
+
+<img src='{{ site.url }}/assets/post_imgs/git_server/git_auth.png' />
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里 <code>AuthzAccessQueryUrl</code> 定义了我们进行账号认证的脚本，传入的参数依次为用户名，密码，appid和用户的ip，在脚本里则可以调用我们自定义的脚本来进行账号的check.</p>
+
+<h3>总结</h3>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过以上几个步骤，应该可以得到一个可用的git server，但离完整还有不少距离，下面可以配置一些管理工具，可视化工具等，也需要提供一个监控系统，甚至可以像github一样，做成一个比较良好的社区。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>
