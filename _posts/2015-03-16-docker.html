@@ -1,0 +1,173 @@
+---
+layout: blog
+title: Docker介绍
+description:
+tags: ['虚拟化']
+---
+<div id="mainContent" class="span8">
+	<h1 class='text-center'>Docker介绍及说明</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>虚拟化</span>
+	<hr style="border-top:1px solid #aaa;">
+	<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;docker算是最近一个比较热门的虚拟化解决方案，之前也看过一些，正好最近实习的项目中也有涉及了docker，又仔细看了看，算是整理成一个笔记</p>
+
+<h4 class='blog'>1，介绍</h4>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;docker是最近流行起来的一个虚拟化技术，但是虚拟化这个已经存在了比较长的时间，特别是在linux中，docker则是在最近发展的一种虚拟化技术，基于lxc，stackoverflow上的<a href="http://stackoverflow.com/questions/17989306/what-does-docker-add-to-just-plain-lxc">这篇讨论</a>比较好的解释了lxc和docker的区别。相比于lxc，docker更抽象于具体机器，提供了类似git的版本管理方式来管理容器。</p>
+
+<h4 class='blog'>2，几个概念</h4>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面先介绍几个在docker使用中的概念。</p>
+
+<ul>
+<li><p class='blog'>image&amp;container</p>
+
+<p class='blog'>  类比于一些编程语言，譬如Java中的类和实例，image类似于类，而container则类似于实例，每一个image被pull后，用户启动image，就相当于创建了一个container。container可以被修改，修改后的container也可以被commit到registry，这时commit的就是一个image。下面的一张docker官方给出的图可以看到image和container的区别和联系</p>
+<img src='{ site.url }/assets/post_imgs/docker/docker_image_container.png' >
+</li>
+<li><p class='blog'>registry</p>
+
+<p class='blog'>  类似github，是一个docker image的公共管理库，有名的是<a href="https://registry.hub.docker.com">官方的Hub</a>，注册后可以下载自己需要的image，上面也有很多优秀的，包括官方的image。用户也可以自己修改container后上传到这里，创建属于自己的image。</p></li>
+<li><p class='blog'>boot2docker</p>
+
+<p class='blog'>  这是docker官方针对windows和mac推出的一个docker端，针对mac和windows下无法使用lxc技术的情况，其实就是一个封装的脚本，下面会详细介绍。</p></li>
+</ul>
+
+
+<h4 class='blog'>3，安装</h4>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里主要说明了Mac环境下的安装，对于Linux和Windows环境，可以参考<a href="">官方的安装说明</a>。
+如果是Mac用户，你需要的是下载一个官方提供的程序——boot2docker，对于国内用户，这个比较麻烦，因为这个的源码在github上，下载地址在AWS上，不大好下，不过挂个VPN啥的，勉强可以下载下来。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下载后直接按正常的pkg文件安装即可。</p>
+
+<h4 class='blog'>4，启动&amp;使用</h4>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装完成后，就可以使用docker。首先，需要启动boot2docker，简单的一条命令</p>
+
+<pre><code>$ boot2docker start
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果是第一次，可能要先初始化一个vm。</p>
+
+<pre><code>$ boot2docker init
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之后能ps出进程就表示启动成功，同时，需要EXPORT一些环境变量，这个具体可以看终端的提示。</p>
+
+<pre><code>$ EXPORT DOCKER_HOST=tcp://192.168.59.103:2376
+$ //更多需要EXPORT的变量
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这样就可以开始使用docker了。</p>
+
+<h5 class='blog'>4.1，Hello World</h5>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先当然是一个Hello World，docker的hello world是从<a href="https://registry.hub.docker.com/">Docker Hub</a>下载一个简单的imgae并启动，首先，我们要有docker hub的账号，没有可以注册一个。之后执行如下命令来下载一个镜像</p>
+
+<pre><code>$ docker pull ubuntu:14.04
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这样，发行版为14.04的ubuntu镜像就下载下来了，这里 ubuntu是对应的repo的name，14.04则是tag，可以类比成git中的tag。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面启动这个镜像，并打印hell world</p>
+
+<pre><code>$ docker run ubuntu:14.04 /bin/echo "hello world"
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到终端中会有期待的字符串出现。
+或者可以直接通过后面一条命令实现，这样docker会先搜索本地的image，如果没有会下载对应的image。</p>
+
+<h5 class='blog'>4.2，进入docker终端</h5>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当然，光打印一个字符串是不够的，我们希望能做的更多，下面就是进入docker内部看下具体的结构是什么。依然以刚才的ubuntu:14.04镜像为例，运行下面的指令</p>
+
+<pre><code>$ docker run -t -i ubuntu:14.04 /bin/bash
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里 -t 选项指开一个tty窗口，-i选项指进入交互模式，更多参数可以参考帮助文档。后面则是启动对应的镜像并运行 /bin/bash 命令，这样会在终端里进入运行中的image，或者应该说container。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后我们就可以发现，这个和正常的ubunut没啥区别，常用的指令一样可以使用，如下。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果要退出当前的container，直接输入 exit 即可。</p>
+
+<h5>4.3 外部访问</h5>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;现在我们可以进入到docker内部，但是这样仅仅是一个小玩具而已，要真正让docker起作用，还需要能够在外部访问，这也是docker的一个目的。比如我需要nginx环境，那么只需要下载一个nginx的image，运行即可。那这样就涉及到了端口映射。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先我们需要让一个container能在后台运行，这个只需要在启动时加个 -d参数。对于端口映射，需要加上-p 或 -P 参数，两者的区别是 -p 指定暴露端口而 -P 暴露所有可以暴露的端口。下面的命令是启动一个nginx的镜像并映射nginx的80端口到宿主机的8081端口。</p>
+
+<pre><code>$ docker run -d -p 8081:80 nginx
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里-d 表示这个container以后台方式运行，-p参数中，指定container中nginx的80端口暴露给8081端口，这样，我们就可以在外部通过8081端口访问，但是在mac中需要注意，由于有boot2docker的存在，所以外部不能用localhost访问，而是需要用最开始配置的DOCKER_HOST来访问，如下所示：</p>
+<img src='{ site.url }/assets/post_imgs/docker/docker-nginx-host.png'>
+<p class='blog'>之后可以看到正常的页面</p>
+<img src='{ site.url }/assets/post_imgs/docker/docker-nginx-page.png'>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果是-P选项，则不需要指定端口，而是默认暴露全部端口。</p>
+
+<h5 class='blog'>4.4，挂载</h5>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;container现在可以进行交互，但数据呢，如果想用一些宿主机上的数据或文件怎么办，这个就涉及到docker挂载。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在mac上挂载有点麻烦，因为docker是通过boot2docker起来的，而boot2docker本质上是一个vm，所以对于container来说，宿主机是那个vm而不是mac，因此我们需要先将mac映射到vm上，然后再将vm和docker映射，整个过程很麻烦，不过根据官方文档，在新版本的boot2docker中，启动后，vm会加载 $HOME 目录作为共享目录，这样就方便很多。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例如在nginx中，我们需要挂载一个目录作为nginx的DocumentRoot，可以这样做</p>
+
+<pre><code>$ docker run -d -v /host/dir:/usr/share/nginx/html nginx
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这样，在宿主机上的 /host/dir 目录就会作为nginx的静态文件目录被使用，在这个目录(/host/dir)下可以添加自己定义的静态文件，如下</p>
+
+<pre><code>$ echo "page here" &gt; /host/dir/page.html
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后就可以访问该文件了，当然，运行的时候要注意端口映射。如下图</p>
+
+<img src='{ site.url }/assets/post_imgs/docker/docker-nginx-custom.png'>
+
+<h4 class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5，自定义docker</h4>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上面讨论的都是基于已有的image的操作，在实际使用中，image可能无法满足需求，这就需要我们自定义属于自己的image。下面说下如何自定义一个image。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之前使用的image都是从registry中pull下来的，我们也可以从本地通过Dockerfile构建，首先要有一个基本的image，称为base image, 这是自定义image的基础。这个在Dockerfile中就是这样的格式</p>
+
+<pre><code>FROM ubuntu:14.04
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后，加上我们需要的程序，库等。例如我们需要一个python环境，那就可以这样</p>
+
+<pre><code>RUN apt-get install python2.7.3
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;还可以安装其他环境，不细说。这样一个完整的Dockerfile就是</p>
+
+<pre><code>FROM ubuntu:14.04
+RUN apt-get install python2.7.3
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之后，运行docker的build命令</p>
+
+<pre><code>docker build --rm -t python:base
+</code></pre>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--rm 参数表示删除在构建过程产生的临时container，因为每一行build过程中都会产生一个临时的container，-t参数表示最终生成的image的name和tag。</p>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上面讨论的只是一些简单的命令，还有更高级的功能，可以参考<a href="https://docs.docker.com/reference/builder/">官方的文档</a>。</p>
+
+<h4 class='blog'>6，其他</h4>
+
+<h5 class='blog'>6.1 一些核心技术</h5>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;docker基于lxc技术，但又和lxc不尽相同，具体的介绍等后续有时间再给出。</p>
+
+<h5 class='blog'>6.2 常见的一些使用场景</h5>
+
+<p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;虽然docker目前很火，但实际的应用场景还没有大规模应用到，比较常见的是在PASS层上的应用，为每一独立用户启动一个docker，这样保证用户之间的独立和对资源的管理。还有就是一些团队中如果需要统一的开发或测试环境，可以通过docker来搭建，而不需要每个人都搭建自己的一套。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>

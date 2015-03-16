@@ -1,10 +1,38 @@
----
-layout: blog
-title: 一步步搭建Git Server
-tags: ['git']
-description: 最近因为项目需要搭建一个vcs，目前主流的vcs基本就是svn和git两家，而且git隐隐有一家独大的趋势，于是先从git入手，而且svn已经有不少成熟的类似一键搭建的玩意，就暂时不看
----
-<div id="mainContent" class="span8">
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='/js/bootstrap.min.js'></script>
+　　<title>一步步搭建Git Server</title>
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
 	<h1 class='text-center'>一步步搭建Git Server</h1>
 	<hr style="border-top:1px solid #aaa;">
 	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -24,17 +52,17 @@ description: 最近因为项目需要搭建一个vcs，目前主流的vcs基本�
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们先搭建一个本地环境下的git repo，这个很简单，选定一个目录作为git repo的根目录，新建一个repo，并按照如下命令初始化</p>
 
-<img src='{{ site.url }}/assets/post_imgs/git_server/git_init.png' />
+<img src='http://www.skymoneyc.com/assets/post_imgs/git_server/git_init.png' />
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>git init</code> 用来初始化一个git repo， bare选项用来表示初始化为一个裸仓库，不包含代码等文件，而是记录hook，refs等文件。一般来说，git server上一个bare repo作为一个公共的repo。</p>
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;初始化好了之后，就可以clone或pull了，我们在另一个目录下clone出这个repo</p>
 
-<img src='{{ site.url }}/assets/post_imgs/git_server/git_clone.png' />
+<img src='http://www.skymoneyc.com/assets/post_imgs/git_server/git_clone.png' />
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注意，这里会提示是一个空的repo，因为在初始化的时候的确是一个空的repo，所以下面我们加点文件到repo中并commit，最后push</p>
 
-<img src='{{ site.url }}/assets/post_imgs/git_server/git_push.png' />
+<img src='http://www.skymoneyc.com/assets/post_imgs/git_server/git_push.png' />
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到，基本本机文件系统的git server搭建完成，不过这个只是“本机”环境，什么都做不了，因此，下面我们需要结合Web Server来搭建一个真正的git server。</p>
 
@@ -59,7 +87,7 @@ description: 最近因为项目需要搭建一个vcs，目前主流的vcs基本�
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在apache的conf文件中加入git的conf文件，主要是要配置git repo的目录，监听端口等，下面是一个样例配置文件</p>
 
-<img src='{{ site.url }}/assets/post_imgs/git_server/git_apache_conf.png' />
+<img src='http://www.skymoneyc.com/assets/post_imgs/git_server/git_apache_conf.png' />
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配置完成后，重启apache，然后在Git_Repo_Root 下按step 1中的步骤建立一个空的repo，就可以通过 http://servername:8555/&lt;repo_name> 来clone出项目了</p>
 
@@ -69,11 +97,11 @@ description: 最近因为项目需要搭建一个vcs，目前主流的vcs基本�
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目前大部分自建git server都是通过文件来定义用户和密码，这样做的一个缺点是用户对所有的repo都有相同的权限，而且每次更新用户都要手动修改文件，而我们的需求是对于某一个用户，可以访问某一个repo，而不能访问其他无权限的repo，所以需要自己定义认证方法，这里我们引入了apache的一个自定义模块，通过这个模块，我们可以使用用户名密码来进行权限认证。如下加入apache的模块</p>
 
-<img src='{{ site.url }}/assets/post_imgs/git_server/git_auth_conf.png' />
+<img src='http://www.skymoneyc.com/assets/post_imgs/git_server/git_auth_conf.png' />
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以上加入到apache的配置后，再进行auth的配置。这是git 认证配置</p>
 
-<img src='{{ site.url }}/assets/post_imgs/git_server/git_auth.png' />
+<img src='http://www.skymoneyc.com/assets/post_imgs/git_server/git_auth.png' />
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里 <code>AuthzAccessQueryUrl</code> 定义了我们进行账号认证的脚本，传入的参数依次为用户名，密码，appid和用户的ip，在脚本里则可以调用我们自定义的脚本来进行账号的check.</p>
 
@@ -81,5 +109,27 @@ description: 最近因为项目需要搭建一个vcs，目前主流的vcs基本�
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过以上几个步骤，应该可以得到一个可用的git server，但离完整还有不少距离，下面可以配置一些管理工具，可视化工具等，也需要提供一个监控系统，甚至可以像github一样，做成一个比较良好的社区。</p>
 
-<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+<p class='muted' style='font-size: 20px;'>Post On 28 Feb 2015 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
 </div>
+   <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'skymmoneyc'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>
