@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/bootstrap.min.js'></script>
+　　<title>构建自己的账号授权——OAuth介绍和搭建(一)</title>
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
+	<h1 class='text-center'>构建自己的账号授权——OAuth介绍和搭建(一)</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>oauth</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>系统</span>
+	<hr style="border-top:1px solid #aaa;">
+<hr />
+
+<p>在之前搭建一些api平台的过程中，总会遇到一些认证问题，如果是完全不设防，显然会被恶意攻击，频繁访问导致机器宕机。在后来的一些授权中，也是遇到这类问题。</p>
+
+<p>在一开始，我采用的<code>Http Basic Auth</code>，这种方式是最基本的，但是“防君子不防小人”，Basic Auth是可逆的，因此是可破解的，这样对于恶意攻击是无法防范的。</p>
+
+<p>目前在授权问题中，我采用的是<a href="https://zh.wikipedia.org/wiki/OAuth"><code>OAuth</code></a>，OAuth大概意思就是用户访问第三方应用并允许授权，第三方应用凭借授权获取用户的信息，包括个人账号，照片等等。目前主要分为OAuth1 和 OAuth2，这里主要讨论一下OAuth2。主要参考了RFC中关于oauth2的文档，<a href="http://www.rfcreader.com/#rfc6749">链接在此</a></p>
+
+<hr />
+
+<p>在OAuth2中，需要首先明确几个概念</p>
+
+<ul>
+<li><p>resource owner</p>
+
+<p>  信息拥有者。场景中对应账号或其他信息的拥有者，即用户。</p></li>
+<li><p>resource server</p>
+
+<p>  资源服务器。场景中对应第一方服务器，保管resource owner的信息。</p></li>
+<li><p>client</p>
+
+<p>  客户端。即第三方应用，需要resource owner允许授权来获得信息</p></li>
+<li><p>authorization server</p>
+
+<p>  授权分发服务器。用来分发授权。</p></li>
+</ul>
+
+
+<hr />
+
+<p>下面描述一下OAuth2的基本原理和流程</p>
+
+<p>先来考虑这样一个场景，有一个第三方应用，可能是web或移动app，一个用户想访问这个应用，应用提示需要登录，用户可以利用某账号登录，然后用户授权，第三方应用得到授权后，就可以调用api来获得用户的信息。</p>
+
+<p>在这个场景中，应用到得就是OAuth的一个流程，oauth2的正式流程如下图所示：</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/oauth/oauth.png" >
+
+<p>可以看出，主要有如下几个步骤</p>
+
+<ul>
+<li>A，用户(Resource Owner)访问应用(Client)后，Client要求认证授权，引导用户同意授权.</li>
+<li>B，用户同意授权，会有一个授权(Grant)生成。</li>
+<li>C，Client得到授权后，向授权服务器发送授权</li>
+<li>D，授权服务器验证授权无误后，发放token</li>
+<li>E，Client得到token后，请求api</li>
+<li>F，Resource server校验请求后，返回对应的信息</li>
+</ul>
+
+
+<p>可以看到，关键的一步是B，即如何生成Grant并保证client能获得</p>
+
+<p>根据<a href="http://www.rfcreader.com/#rfc6749">RFC6749</a>的描述，Grant分为四种</p>
+
+<ul>
+<li><p>Authorization Code</p>
+
+<p>  授权码是目前使用最多，也算是最安全的一种方式。过程如下：</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/oauth/authorization_code.png" >
+
+
+<p>  在步骤B中，client不是直接向resource owner请求授权，而是将resource owner引导到authorization server，在authorization server上，用户确认授权后，authorization server会重定向到client发送的redirect uri并附上授权码，client在redirect uri中接受收到的授权码，随后通过授权码向authorization server请求交换token，authorization server确认无误后，返回token。</p>
+
+<p>  在这个过程中，授权码是有一定的过期限制的，而且接受授权码和处理授权码的过程对于用户来说是透明的。具体各步骤的参数如下</p>
+
+<p>  对于步骤A，client申请认证的uri，必须包含以下参数</p>
+
+<pre><code>  response_type: 必须，表示授权类型，固定值为 code
+  client_id: 必须，client的唯一标识
+  redirect_uri: 可选，客户端注册设置的回调uri
+  scope：可选，授权的范围
+  state：推荐。client设置，由server回调原封传回。这个官方是推荐的，可        
+          以防止CSRF
+</code></pre>
+
+<p>  一个示例如下</p>
+
+<pre><code>  GET /authorize?response_type=code&amp;client_id=s6BhdRkqt3&amp;state=xyz
+  &amp;redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb HTTP/1.1
+  Host: server.example.com
+</code></pre>
+
+<p>  步骤C中，返回的参数包括：</p>
+
+<pre><code>  code： 必须，server生成的一个授权码，应该设置较短的过期时间，并且只能使用一次
+  state：如果之前client传入，必须原封传回
+</code></pre>
+
+<p>  一个示例如下</p>
+
+<pre><code>  HTTP/1.1 302 Found
+  Location: https://client.example.com/cb?code=SplxlOBeZQQYbYS6WxSbIA
+         &amp;state=xyz
+</code></pre>
+
+<p>  步骤D中，请求的参数包括</p>
+
+<pre><code>  grant_type: 必须，值固定为 authorization_code
+  code: 必须，上一步中server返回的code
+  redirect_uri: 必须，client设置的回调uri
+  client_id: 必须，如上描述。
+</code></pre>
+
+<p>  一个示例如下：</p>
+
+<pre><code>  POST /token HTTP/1.1
+  Host: server.example.com
+  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+  Content-Type: application/x-www-form-urlencoded
+
+  grant_type=authorization_code&amp;code=SplxlOBeZQQYbYS6WxSbIA
+  &amp;redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
+</code></pre>
+
+<p>  server校验无误后，返回的token则如下</p>
+
+<pre><code>  HTTP/1.1 200 OK
+  Content-Type: application/json;charset=UTF-8
+  Cache-Control: no-store
+  Pragma: no-cache
+  {
+      "access_token":"2YotnFZFEjr1zCsicMWpAA",
+      "token_type":"example",
+      "expires_in":3600,
+      "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
+      "example_parameter":"example_value"
+  }
+</code></pre>
+
+<p>  这个模式是目前最常见的。后面我们也会实现这种模式的oauth。</p></li>
+<li><p>Implicit</p>
+
+<p>  隐式授权，也叫简化模式，主要用于不通过client的server，直接在浏览器中向authorization server申请token，跳过了authorization code这个环节，所有步骤在浏览器中完成，token是对用户可见，流程图如下所示</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/oauth/implict.png" >
+
+
+<p>  具体各步骤的参数如下</p>
+
+<p>  步骤A中，client请求认证，参数如下：
+      response_type: 必须，值固定为 token
+      client_id: 必须，client唯一标识符
+      redirect_uri: 可选，client回调地址
+      scope: 可选，授权的范围
+      state: 推荐，同上描述
+  一个示例如下：</p>
+
+<pre><code>  GET /authorize?response_type=token&amp;client_id=s6BhdRkqt3&amp;state=xyz
+  &amp;redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb HTTP/1.1
+  Host: server.example.com
+</code></pre>
+
+<p>  步骤C中，server校验无误后，返回如下参数
+      access_token: 必须，最终的token
+      token_type: 必须，token的类型
+      expires_in: 推荐，token的失效期
+      scope: 可选，同上
+      state: 推荐，同上</p>
+
+<p>  一个示例如下</p>
+
+<pre><code>  HTTP/1.1 302 Found
+  Location: http://example.com/cb#access_token=2YotnFZFEjr1zCsicMWpAA
+         &amp;state=xyz&amp;token_type=example&amp;expires_in=3600
+</code></pre></li>
+<li><p>Resource Owner Password Credentials</p>
+
+<p>  密码模式，顾名思义，需要用户提供用户名和密码。这种一般是client和server之间特别信任，比如是操作系统级或者是某著名公司开发的，而authorization server一般在其他方法无法使用的情况下才考虑使用这种模式。流程如下图</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/oauth/passwd.png" >
+
+<p>  这里就不详细介绍了，使用的案例也不是很多。大部分OAuth系统也不提供。一个case是github的mac客户端，用的就是这个。</p></li>
+<li><p>Client Credentials</p>
+
+<p>  这种模式本质上并不算是OAuth，因为已经对用户透明，以自己(client)的名义向server要求资源。流程如下</p></li>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/oauth/client.png" >
+
+<p> 同样，这里就不详细介绍。</p>
+</ul>
+
+
+<p>以上就是OAuth2中涉及到的几个authorization模式。</p>
+
+<p>此外，对于refresh token，一般是在access token失效是使用，需要client向authorization server请求更新token，这时，authorization server会重新发放一个token。具体可以参考官方介绍。本文大部分也是参考的官方说明。</p>
+
+<p>下一篇就是具体实现OAuth，我会提供一个OAuth的Java版本实现，当然只是一个简单的实现，拥有基本的流程和功能。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On 20 Mar 2015 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>
+   <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'skymmoneyc'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>
