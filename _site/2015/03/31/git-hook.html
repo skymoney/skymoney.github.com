@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/bootstrap.min.js'></script>
+　　<title>Git Server(续)——hook与自动触发操作</title>
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
+	<h1 class='text-center'>一步步搭建Git Server</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>git</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>系统</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在之前的一篇文章中，讨论了如何简单地搭建一个git server并通过http账号密码访问，而不是ssh key访问。在进一步的需求中，用户可能需要在提交代码后能立即在web上看到自己的代码，或者在项目中，需要能立即部署提交后的最新代码(有没有bug那是另一回事了)。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;诸如此类的需求。我们自然可以写一个类似crontab的定时任务，但这个实现很繁琐同时也有一系列的挑战，这个时候，git的hook就起了作用。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hook从字面上的理解是钩子，事实上这个命名还是挺准确的，hook在这里的确起了钩子的作用，能将代码的commit，push等操作作为一个触发因子，一旦触发，hook就会执行相关的操作。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;那hook文件保存在哪呢？在一个git的repo中，我们可以发现有一个隐藏目录<code>.git</code>，看下这个目录下有什么内容</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/git_hook/git_dir.png" />
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到，这个目录保存了git的配置、提交等信息，当然也包括了hook，就在<code>hooks</code>目录下，再看下<code>hooks</code>目录下的内容</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/git_hook/hook_dir.png" />
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到，都是<code>.sample</code>结尾的文件，说明都是还没有发挥作用的示例文件。然后可以看到都是<code>pre-commit</code>，<code>post-update</code>等命名的文件，这些文件其实从字面上也可以理解大概的意思，这些文件都是在对应的时刻或者说对应的操作触发后执行的，具体的对应可以看下面的表</p>
+
+<table>
+<thead>
+<tr>
+<th>Hook Name </th>
+<th> Invoked By </th>
+<th align="center"> Description </th>
+<th> Params</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>applypatch-msg </td>
+<td> <code>git am</code> </td>
+<td align="center">Can edit the commit message file and is often used to verify or actively format a patch's message to a project's standards. A non-zero exit status aborts the commit.</td>
+<td>(1) name of the file containing the proposed commit message</td>
+</tr>
+<tr>
+<td>pre-applypatch</td>
+<td><code>git am</code></td>
+<td align="center"> This is actually called after the patch is applied, but before the changes are committed. Exiting with a non-zero status will leave the changes in an uncommitted state. Can be used to check the state of the tree before actually committing the changes.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>post-applypatch</td>
+<td><code>git am</code></td>
+<td align="center"> This hook is run after the patch is applied and committed. Because of this, it cannot abort the process, and is mainly used for creating notifications.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>pre-commit</td>
+<td><code>git commit</code></td>
+<td align="center">This hook is called before obtaining the proposed commit message. Exiting with anything other than zero will abort the commit. It is used to check the commit itself (rather than the message).</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>prepare-commit-msg </td>
+<td><code>git commit</code></td>
+<td align="center"> Called after receiving the default commit message, just prior to firing up the commit message editor. A non-zero exit aborts the commit. This is used to edit the message in a way that cannot be suppressed.</td>
+<td>(1 to 3) Name of the file with the commit message, the source of the commit message (message, template, merge, squash, or commit), and the commit SHA-1 (when operating on an existing commit).</td>
+</tr>
+<tr>
+<td>commit-msg</td>
+<td><code>git commit</code></td>
+<td align="center">Can be used to adjust the message after it has been edited in order to ensure conformity to a standard or to reject based on any criteria. It can abort the commit if it exits with a non-zero value.</td>
+<td>(1) The file that holds the proposed message.</td>
+</tr>
+<tr>
+<td>post-commit</td>
+<td><code>git commit</code></td>
+<td align="center">Called after the actual commit is made. Because of this, it cannot disrupt the commit. It is mainly used to allow notifications.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>pre-rebase</td>
+<td><code>git rebase</code></td>
+<td align="center">Called when rebasing a branch. Mainly used to halt the rebase if it is not desirable.</td>
+<td>(1 or 2) The upstream from where it was forked, the branch being rebased (not set when rebasing current)</td>
+</tr>
+<tr>
+<td>post-checkout</td>
+<td><code>git checkout</code> and <code>git clone</code></td>
+<td align="center">Run when a checkout is called after updating the worktree or after <code>git clone</code>. It is mainly used to verify conditions, display differences, and configure the environment if necessary.</td>
+<td>(3) Ref of the previous HEAD, ref of the new HEAD, flag indicating whether it was a branch checkout (1) or a file checkout (0)</td>
+</tr>
+<tr>
+<td>post-merge</td>
+<td><code>git merge</code> or <code>git pull</code></td>
+<td align="center">Called after a merge. Because of this, it cannot abort a merge. Can be used to save or apply permissions or other kinds of data that git does not handle.</td>
+<td>(1) Flag indicating whether the merge was a squash.</td>
+</tr>
+<tr>
+<td>pre-push</td>
+<td><code>git push</code></td>
+<td align="center">Called prior to a push to a remote. In addition to the parameters, additional information, separated by a space is passed in through stdin in the form of "<local ref> <local sha1> <remote ref> <remote sha1>". Parsing the input can get you additional information that you can use to check. For instance, if the local sha1 is 40 zeros long, the push is a delete and if the remote sha1 is 40 zeros, it is a new branch. This can be used to do many comparisons of the pushed ref to what is currently there. A non-zero exit status aborts the push.</td>
+<td>(2) Name of the destination remote, location of the destination remote</td>
+</tr>
+<tr>
+<td>pre-receive</td>
+<td><code>git receive-pack</code>on the remote repo</td>
+<td align="center">This is called on the remote repo just before updating the pushed refs. A non-zero status will abort the process. Although it receives no parameters, it is passed a string through stdin in the form of "&lt;old-value> &lt;new-value> &lt;ref-name>" for each ref.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>update</td>
+<td><code>git receive-pack</code>on the remote repo</td>
+<td align="center">This is run on the remote repo once for each ref being pushed instead of once for each push. A non-zero status will abort the process. This can be used to make sure all commits are only fast-forward, for instance.</td>
+<td>(3) The name of the ref being updated, the old object name, the new object name</td>
+</tr>
+<tr>
+<td>post-receive</td>
+<td><code>git receive-pack</code>on the remote repo</td>
+<td align="center">This is run on the remote when pushing after the all refs have been updated. It does not take parameters, but receives info through stdin in the form of "&lt;old-value> &lt;new-value> &lt;ref-name>". Because it is called after the updates, it cannot abort the process.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>post-update</td>
+<td><code>git receive-pack</code>on the remote repo</td>
+<td align="center">This is run only once after all of the refs have been pushed. It is similar to the post-receive hook in that regard, but does not receive the old or new values. It is used mostly to implement notifications for the pushed refs.</td>
+<td>(?) A parameter for each of the pushed refs containing its name</td>
+</tr>
+<tr>
+<td>pre-auto-gc </td>
+<td> <code>git gc --auto</code></td>
+<td align="center">Is used to do some checks before automatically cleaning repos.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>post-rewrite</td>
+<td><code>git commit --amend</code>, <code>git-rebase</code></td>
+<td align="center">This is called when git commands are rewriting already committed data. In addition to the parameters, it receives strings in stdin in the form of "&lt;old-sha1> &lt;new-sha1>".</td>
+<td>(1) Name of the command that invoked it (amend or rebase)</td>
+</tr>
+</tbody>
+</table>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面来一个实际的例子看下。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先先在本地建立一个repo，如下所示</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/git_hook/git_init.png" />
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到，在不是bare repo，即裸仓库的情况下，目录下包含一个 .git目录，这个就是git repo的相关配置所在，进入目录后，同样我们进入hook目录。可以发现，和上面的内容是一样的。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面说一个实际的需求，比如我们需要在每次项目提交更新后，自动部署项目，这个用hook来如何实现呢，这里就需要一个Post-Commit hook，根据上面的说明，这个hook在每次commit完成后调用，不会对commit产生影响，</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所以在 <code>.git/hooks/</code> 目录下，我们设置 post-commit，这里就简单设置一下，随便输出到一个文件即可，如下</p>
+
+<pre><code>
+	#!/bin/sh
+
+	echo "test commmit hook demo" > /User/cheng/Workspace/git_log
+</code></pre>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加上执行权限后，我们在repo中新增一个文件并commit，如下</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/git_hook/git_commit.png" />
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这时候看下我们设置的log输出：</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/git_hook/git_log.png" />
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以发现，的确触发了</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上面讨论的是在本地repo的提交触发，如果是本地提交并push到远程的repo中呢，同样地，我们可以利用post-receive，这个监控是在远程bare repo中，收到push后触发。就不赘述了。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有了hook，我们才算是真正意义上的定制git，可以将git转变为自己的一个版本控制库，这也是git的一个强大之处。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On 31 Mar 2015 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+
+</div>
+   <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'skymmoneyc'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>

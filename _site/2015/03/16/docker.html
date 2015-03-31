@@ -54,7 +54,7 @@
 <li><p class='blog'>image&amp;container</p>
 
 <p class='blog'>  类比于一些编程语言，譬如Java中的类和实例，image类似于类，而container则类似于实例，每一个image被pull后，用户启动image，就相当于创建了一个container。container可以被修改，修改后的container也可以被commit到registry，这时commit的就是一个image。下面的一张docker官方给出的图可以看到image和container的区别和联系</p>
-<img src='{ site.url }/assets/post_imgs/docker/docker_image_container.png' >
+<img src='http://www.skymoneyc.com/assets/post_imgs/docker/docker_image_container.png' >
 </li>
 <li><p class='blog'>registry</p>
 
@@ -132,9 +132,9 @@ $ //更多需要EXPORT的变量
 </code></pre>
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里-d 表示这个container以后台方式运行，-p参数中，指定container中nginx的80端口暴露给8081端口，这样，我们就可以在外部通过8081端口访问，但是在mac中需要注意，由于有boot2docker的存在，所以外部不能用localhost访问，而是需要用最开始配置的DOCKER_HOST来访问，如下所示：</p>
-<img src='{ site.url }/assets/post_imgs/docker/docker-nginx-host.png'>
+<img src='http://www.skymoneyc.com/assets/post_imgs/docker/docker-nginx-host.png'>
 <p class='blog'>之后可以看到正常的页面</p>
-<img src='{ site.url }/assets/post_imgs/docker/docker-nginx-page.png'>
+<img src='http://www.skymoneyc.com/assets/post_imgs/docker/docker-nginx-page.png'>
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果是-P选项，则不需要指定端口，而是默认暴露全部端口。</p>
 
@@ -156,7 +156,7 @@ $ //更多需要EXPORT的变量
 
 <p class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后就可以访问该文件了，当然，运行的时候要注意端口映射。如下图</p>
 
-<img src='{ site.url }/assets/post_imgs/docker/docker-nginx-custom.png'>
+<img src='http://www.skymoneyc.com/assets/post_imgs/docker/docker-nginx-custom.png'>
 
 <h4 class='blog'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5，自定义docker</h4>
 
