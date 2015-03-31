@@ -5,7 +5,7 @@ tags: ['git']
 description: 在之前的一篇文章中，讨论了如何简单地搭建一个git server并通过http账号密码访问，而不是ssh key访问。在进一步的需求中，用户可能需要在提交代码后能立即在web上看到自己的代码，或者在项目中，需要能立即部署提交后的最新代码(有没有bug那是另一回事了)
 ---
 <div id="mainContent" class="span8">
-	<h1 class='text-center'>一步步搭建Git Server</h1>
+	<h1 class='text-center'>Git Server(续)——hook与自动触发操作</h1>
 	<hr style="border-top:1px solid #aaa;">
 	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<span class='muted font_large'>git</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -27,6 +27,121 @@ description: 在之前的一篇文章中，讨论了如何简单地搭建一个g
 <img src="{{ site.url }}/assets/post_imgs/git_hook/hook_dir.png" />
 
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到，都是<code>.sample</code>结尾的文件，说明都是还没有发挥作用的示例文件。然后可以看到都是<code>pre-commit</code>，<code>post-update</code>等命名的文件，这些文件其实从字面上也可以理解大概的意思，这些文件都是在对应的时刻或者说对应的操作触发后执行的，具体的对应可以看下面的表</p>
+
+<table>
+<thead>
+<tr>
+<th>Hook Name </th>
+<th> Invoked By </th>
+<th align="center"> Description </th>
+<th> Params</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>applypatch-msg </td>
+<td> <code>git am</code> </td>
+<td align="center">Can edit the commit message file and is often used to verify or actively format a patch's message to a project's standards. A non-zero exit status aborts the commit.</td>
+<td>(1) name of the file containing the proposed commit message</td>
+</tr>
+<tr>
+<td>pre-applypatch</td>
+<td><code>git am</code></td>
+<td align="center"> This is actually called after the patch is applied, but before the changes are committed. Exiting with a non-zero status will leave the changes in an uncommitted state. Can be used to check the state of the tree before actually committing the changes.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>post-applypatch</td>
+<td><code>git am</code></td>
+<td align="center"> This hook is run after the patch is applied and committed. Because of this, it cannot abort the process, and is mainly used for creating notifications.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>pre-commit</td>
+<td><code>git commit</code></td>
+<td align="center">This hook is called before obtaining the proposed commit message. Exiting with anything other than zero will abort the commit. It is used to check the commit itself (rather than the message).</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>prepare-commit-msg </td>
+<td><code>git commit</code></td>
+<td align="center"> Called after receiving the default commit message, just prior to firing up the commit message editor. A non-zero exit aborts the commit. This is used to edit the message in a way that cannot be suppressed.</td>
+<td>(1 to 3) Name of the file with the commit message, the source of the commit message (message, template, merge, squash, or commit), and the commit SHA-1 (when operating on an existing commit).</td>
+</tr>
+<tr>
+<td>commit-msg</td>
+<td><code>git commit</code></td>
+<td align="center">Can be used to adjust the message after it has been edited in order to ensure conformity to a standard or to reject based on any criteria. It can abort the commit if it exits with a non-zero value.</td>
+<td>(1) The file that holds the proposed message.</td>
+</tr>
+<tr>
+<td>post-commit</td>
+<td><code>git commit</code></td>
+<td align="center">Called after the actual commit is made. Because of this, it cannot disrupt the commit. It is mainly used to allow notifications.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>pre-rebase</td>
+<td><code>git rebase</code></td>
+<td align="center">Called when rebasing a branch. Mainly used to halt the rebase if it is not desirable.</td>
+<td>(1 or 2) The upstream from where it was forked, the branch being rebased (not set when rebasing current)</td>
+</tr>
+<tr>
+<td>post-checkout</td>
+<td><code>git checkout</code> and <code>git clone</code></td>
+<td align="center">Run when a checkout is called after updating the worktree or after <code>git clone</code>. It is mainly used to verify conditions, display differences, and configure the environment if necessary.</td>
+<td>(3) Ref of the previous HEAD, ref of the new HEAD, flag indicating whether it was a branch checkout (1) or a file checkout (0)</td>
+</tr>
+<tr>
+<td>post-merge</td>
+<td><code>git merge</code> or <code>git pull</code></td>
+<td align="center">Called after a merge. Because of this, it cannot abort a merge. Can be used to save or apply permissions or other kinds of data that git does not handle.</td>
+<td>(1) Flag indicating whether the merge was a squash.</td>
+</tr>
+<tr>
+<td>pre-push</td>
+<td><code>git push</code></td>
+<td align="center">Called prior to a push to a remote. In addition to the parameters, additional information, separated by a space is passed in through stdin in the form of "<local ref> <local sha1> <remote ref> <remote sha1>". Parsing the input can get you additional information that you can use to check. For instance, if the local sha1 is 40 zeros long, the push is a delete and if the remote sha1 is 40 zeros, it is a new branch. This can be used to do many comparisons of the pushed ref to what is currently there. A non-zero exit status aborts the push.</td>
+<td>(2) Name of the destination remote, location of the destination remote</td>
+</tr>
+<tr>
+<td>pre-receive</td>
+<td><code>git receive-pack</code>on the remote repo</td>
+<td align="center">This is called on the remote repo just before updating the pushed refs. A non-zero status will abort the process. Although it receives no parameters, it is passed a string through stdin in the form of "&lt;old-value> &lt;new-value> &lt;ref-name>" for each ref.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>update</td>
+<td><code>git receive-pack</code>on the remote repo</td>
+<td align="center">This is run on the remote repo once for each ref being pushed instead of once for each push. A non-zero status will abort the process. This can be used to make sure all commits are only fast-forward, for instance.</td>
+<td>(3) The name of the ref being updated, the old object name, the new object name</td>
+</tr>
+<tr>
+<td>post-receive</td>
+<td><code>git receive-pack</code>on the remote repo</td>
+<td align="center">This is run on the remote when pushing after the all refs have been updated. It does not take parameters, but receives info through stdin in the form of "&lt;old-value> &lt;new-value> &lt;ref-name>". Because it is called after the updates, it cannot abort the process.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>post-update</td>
+<td><code>git receive-pack</code>on the remote repo</td>
+<td align="center">This is run only once after all of the refs have been pushed. It is similar to the post-receive hook in that regard, but does not receive the old or new values. It is used mostly to implement notifications for the pushed refs.</td>
+<td>(?) A parameter for each of the pushed refs containing its name</td>
+</tr>
+<tr>
+<td>pre-auto-gc </td>
+<td> <code>git gc --auto</code></td>
+<td align="center">Is used to do some checks before automatically cleaning repos.</td>
+<td>(None)</td>
+</tr>
+<tr>
+<td>post-rewrite</td>
+<td><code>git commit --amend</code>, <code>git-rebase</code></td>
+<td align="center">This is called when git commands are rewriting already committed data. In addition to the parameters, it receives strings in stdin in the form of "&lt;old-sha1> &lt;new-sha1>".</td>
+<td>(1) Name of the command that invoked it (amend or rebase)</td>
+</tr>
+</tbody>
+</table>
 
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面来一个实际的例子看下。</p>
 
