@@ -20,10 +20,10 @@ tags: ['docker', '虚拟化']
 
 <p>首先来看下docker网络的整体部署结构，如下图</p>
 
-<img src="{{ site.url }}/assets/post_imgs/git_hook/git_log.png" />
+<img src="{{ site.url }}/assets/post_imgs/docker_network/docker-network.png" />
 
 <p>可以看到，docker主要是构建了一个<code>docker0</code>的网桥，这个网桥起到了管理容器网络的作用。在docker服务启动的时候，会在宿主主机上创建这样一个网桥，然后会分配一个局域网地址给<code>docker0</code>接口，比如<code>172.17.42.1</code>。</p>
-<p>然后当启动一个容器的时候，会创建一个<code>veth pair</code>接口(当数据包发送到一个接口时，另外一个接口也能收到数据)，这样的一对接口在容器上就是<code><eth0/code>，在<code>docker0</code>上则是以<code>veth</code>开头的接口，通过这种方式，主机容器之间，容器与容器之间就可以通信了。</p>
+<p>然后当启动一个容器的时候，会创建一个<code>veth pair</code>接口(当数据包发送到一个接口时，另外一个接口也能收到数据)，这样的一对接口在容器上就是<code>eth0</code>，在<code>docker0</code>上则是以<code>veth</code>开头的接口，通过这种方式，主机容器之间，容器与容器之间就可以通信了。</p>
 
 <h4 id="toc_2">基本配置</h4>
 
