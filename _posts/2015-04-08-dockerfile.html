@@ -1,0 +1,95 @@
+---
+title: Docker学习——Dockerfile相关
+layout: blog
+description: 之前介绍的docker相关中，提到了docker的images可以通过docker pull来获取，也可以通过自己定义Dockerfile, 来构建，前一种比较简单，不多说，而后一种需要我们自己编写文件，在编写过程中需要有一些要注意。
+tags: ['docker', '虚拟化']
+---
+<div id="mainContent" class="span8">
+	<h1 class='text-center'>Docker学习——Dockerfile相关</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>docker</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>虚拟化</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p>之前介绍的docker相关中，提到了docker的images可以通过<code>docker pull</code>来获取，也可以通过自己定义<code>Dockerfile</code>来构建，前一种比较简单，不多说，而后一种需要我们自己编写文件，在编写过程中需要有一些要注意。</p>
+
+<h4 id="toc_1">一、基本的说明</h4>
+
+<p>有一些常见的注意点，如下</p>
+
+<h5 id="toc_2">尽可能简洁</h5>
+
+<p>这里简洁是指保证容器能够快速启动、停止，也能够被快速删除并重新构建。</p>
+
+<h5 id="toc_3">使用<code>.dockerignore</code>文件</h5>
+
+<p>对于构建过程中一些不需要文件，例如<code>.git</code>目录下的文件，可以使用<code>.dockerignore</code>来忽略。加入到该文件中的匹配文件将会被忽略。</p>
+
+<h5 id="toc_4">避免安装不必要的包或程序</h5>
+
+<p>为了保证镜像的简洁和减少依赖，应该尽可能减少不需要的包或程序，保证镜像整体的最小化。例如，在一个数据库的镜像中就没必要安装一个文本编辑器的程序。</p>
+
+<h5 id="toc_5">一个container中只运行一个进程</h5>
+
+<p>大部分情况下，一个镜像启动后，在这个container中，应该保证只运行了一个进程，比如，mysql的container只运行mysql服务而不应该出现nginx(大部分情况)。这样也符合<code>弱耦合</code>的原则，也有利于后面的扩展，如果container之间有一些依赖，比如mysql需要apache支撑的话，可以使用<code>container linking</code>，这个在之前也介绍过。</p>
+
+<h5 id="toc_6">image层次最小化</h5>
+
+<p>为了保证整个dockerfile的可读性(随之而来的也就是长期可维护性)，需要尽可能减少整个镜像的层次性，即尽可能不要安装太多程序，可以水平扩展而不是纵向扩展。</p>
+
+<h5 id="toc_7">多参数分行</h5>
+
+<p>在具体的dockerfile里，也要保证可读性和可维护性。比如，如果要安装一个很多的服务或程序，将这些一行行隔开，如下：</p>
+
+<pre><code>RUN apt-get update &amp;&amp; apt-get install -y \
+    bzr \
+    git \
+    ssh</code></pre>
+
+<p>这样看起来就比较清爽，同时，如果后面想删掉或修改某个程序服务，也比较好修改。</p>
+
+<h5 id="toc_8">善用cache</h5>
+
+<p>在构建镜像的过程中，dockerfile会在每一步的构建过程中寻找是否有已有的cache镜像，如果有的话就会使用cache而不是构建新的。当然也可以在命令中使用<code>--no-cache=true</code>来禁止使用cache。</p>
+
+<p>不过chche有时还是很有用的，所以，如果要使用cache，就需要明白cache的验证机制</p>
+
+<ul>
+<li>在<code>baseimage</code>已有cache存在的情况下，会查找<code>baseimage</code>的所有派生出得子镜像看是否有符合dockerfile的构建指令，如果没有，cache验证失败</li>
+<li>大部分情况下，dockerfile就是比较构建指令的异同来决定是否使用cache，但视具体命令而定</li>
+<li>对于<code>ADD</code>和<code>COPY</code>命令，会检查将要加入到镜像中的文件，会比较checksum来确定加入的是不是相同的，如果不同，包括元数据(metadata)，那么cache验证失败</li>
+<li>对于其他的命令，那dockerfile只是检查命令本身是否相同，而不需要比较具体的文件。</li>
+</ul>
+
+<h4 id="toc_9">指令编写说明</h4>
+
+<p>下面是一些具体指令的编写说明，如何针对具体的指令来实行最好的编写方式。以下是一些代表的指令</p>
+
+<h5 id="toc_10">FROM</h5>
+
+<p>对于<code>baseimage</code>的选取，尽量使用当前的官方镜像。比较稳定同时也比较可靠。</p>
+
+<h5 id="toc_11">RUN</h5>
+
+<p>正如上面提到了，一般<code>RUN</code>指令是用来安装一些新的程序或包，所以，尽可能把复杂的指令分成多行。例如</p>
+
+<pre><code>RUN apt-get update &amp;&amp; apt-get install -y \
+git \
+ssh</code></pre>
+
+<p>特别的，如果是使用<code>apt-get</code>，那么<code>apt-get update</code>不要放在单独行，这样会造成cache问题。</p>
+
+<h5 id="toc_12">CMD</h5>
+
+<p><code>CMD</code>指令大部分情况下用来启动一个容器中的程序或服务，所以，格式应该这样，<code>CMD [&#39;executable&#39;, &#39;arg1&#39;]</code>。</p>
+
+<p>更多的命令可以参考<a href="https://docs.docker.com/articles/dockerfile_best-practices/">这里</a></p>
+
+<h4 id="toc_13">总结</h4>
+
+<p><code>Dockefile</code>是docker获取镜像的两种方式之一，也是唯一能够自定义自己的镜像的方式，所以这个文件的编写就特别重要。以上只是一些简单地说明，真正的编写经验还是需要通过实际使用来获得。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+
+</div>
