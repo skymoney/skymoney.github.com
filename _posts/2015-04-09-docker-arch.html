@@ -1,0 +1,82 @@
+---
+title: Docker学习——docker架构
+layout: blog
+description: 其实这篇文章应该在一开始就出现，不过之前由于一直在看docker的安全和网络部分，所以也就一直没写。现在也算是补全了
+tags: ['docker', '虚拟化']
+---
+<div id="mainContent" class="span8">
+	<h1 class='text-center'>Docker学习——docker架构</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>docker</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>虚拟化</span>
+	<hr style="border-top:2px solid #aaa;">
+
+
+<p>其实这篇文章应该在一开始就出现，不过之前由于一直在看docker的安全和网络部分，所以也就一直没写。现在也算是补全了。</p>
+
+<p>首先先来一张docker的架构图吧</p>
+
+<img src="{{ site.url }}/assets/post_imgs/docker_arch/docker_arch.png"/>
+
+<p>可以看到，docker整体是一个<code>client/server</code>架构，主要由两部分构成：一个是docker的client端，给用户使用，通过client和docker进行交互；另一个是docker服务，这也是最重要的，在宿主机(HOST)上跑docker服务，docker服务负责container的构建、启动、停止等。</p>
+
+<p>关于docker中image和container的区别，docker是如何启动的这些都在之前的文章中提及，这里主要说一下docker的底层组织，包括构成docker的一系列支撑。</p>
+
+<h4 id="toc_1">namespace</h4>
+
+<p>namespace是linux的一个内核特性，提供了资源的隔离性，不同的namespace下的资源无法互相访问，docke正是采用了这种特性。</p>
+
+<p>docker使用的几种namespace如下</p>
+
+<ul>
+<li><code>pid</code> namespace</li>
+</ul>
+
+<p><code>pid</code> namespace主要用来隔离linux中的进程号，所以在不同的<code>pid</code> namespace中可以有相同的<code>PID</code>，不同的namespace中的进程卡不到对方。</p>
+
+<ul>
+<li><code>net</code> namespace</li>
+</ul>
+
+<p><code>network</code> namespace主要用来隔离网络部分，包括防火墙、iptables等，不同的namespace可以通过<code>veth</code> 接口来实现通信。</p>
+
+<ul>
+<li><code>ipc</code> namespace</li>
+</ul>
+
+<p><code>ipc</code> namespace 负责隔离ipc部分，在相同的namespace内ipc可互相通信，不同的namespace之间的ipc不可见。</p>
+
+<ul>
+<li><code>mnt</code> namespace</li>
+</ul>
+
+<p><code>mnt</code> namespace 负责隔离文件系统部分，在一个新的namespace里，将会通过mount创建一个新的文件层次视图。而保证其他的namespace不受影响。</p>
+
+<ul>
+<li><code>uts</code> namespace</li>
+</ul>
+
+<p><code>uts</code> namespace 负责创建新的hostname，在刚隔离出来时会继承父namespace中的hostname，然后可以通过设定修改成新的hostname，和<code>net</code> namespace配合就可以构建出一个新的主机和网络。</p>
+
+<h4 id="toc_2">control cgroups</h4>
+
+<p>cgroups是另外一个linux内核特性，主要保证了资源分配和使用的独立性。</p>
+
+<p>cgroups的具体介绍可以参考另一篇文章。</p>
+
+<h4 id="toc_3">union file system</h4>
+
+<p><code>Union file system</code>，是一种文件系统，可以让不同的文件目录，类似于git中的branch，同时挂载到一起。这个特性也是构成了docker在构建image的基础，可以基于原有的image一层层加而不需要重新构建。</p>
+
+<h4 id="toc_4">container format</h4>
+
+<p>docker中的容器格式默认是<code>libcontainer</code>，同时也支持<code>lxc</code>格式，据官网，未来或许会支持更多格式。</p>
+
+<h3 id="toc_5">总结</h3>
+
+<p>从整个docker的架构来看，应用了很多现有的技术，所以说docker或类似的概念很早就有了，<code>lxc</code>就是一个典型。只不过docker相比之下更偏应用层面和用户层面。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+
+</div>
