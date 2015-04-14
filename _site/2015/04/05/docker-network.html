@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/bootstrap.min.js'></script>
+　　<title>Docker学习——docker网络相关</title>
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
+	<h1 class='text-center'>Docker学习——docker网络相关</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>docker</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>虚拟化</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p>之前简单介绍了docker的相关基础，包括安装、启动、挂载和交互，下面介绍以下docker网络方面的内容。</p>
+
+<p>在实际docker使用中，最多的还是网络方面的涉及，毕竟需要和外部交互。交互过程中当然就会涉及网络方面的</p>
+
+<h4 id="toc_1">整体结构</h4>
+
+<p>首先来看下docker网络的整体部署结构，如下图</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/docker_network/docker-network.png" />
+
+<p>可以看到，docker主要是构建了一个<code>docker0</code>的网桥，这个网桥起到了管理容器网络的作用。在docker服务启动的时候，会在宿主主机上创建这样一个网桥，然后会分配一个局域网地址给<code>docker0</code>接口，比如<code>172.17.42.1</code>。</p>
+<p>然后当启动一个容器的时候，会创建一个<code>veth pair</code>接口(当数据包发送到一个接口时，另外一个接口也能收到数据)，这样的一对接口在容器上就是<code>eth0</code>，在<code>docker0</code>上则是以<code>veth</code>开头的接口，通过这种方式，主机容器之间，容器与容器之间就可以通信了。</p>
+
+<h4 id="toc_2">基本配置</h4>
+
+<h5 id="toc_3">基本配置选项</h5>
+
+<p>基本配置主要分为三类。</p>
+
+<ul>
+<li><p>仅服务支持 
+这一类配置参数是只有在docker服务启动时能进行配置，比如下面借几个</p>
+
+<ul>
+<li>-b BRIDGE or --bridge=BRIDGE --指定容器挂载的网桥</li>
+<li>--bip=CIDR --定制 docker0 的掩码</li>
+<li>--icc=true|false --是否支持容器之间进行通信</li>
+<li>更多参见文档</li>
+</ul></li>
+<li><p>服务&amp;容器支持
+这一类配置既可以在启动docker服务时指定，也可以在启动容器的时候指定</p>
+
+<ul>
+<li>--dns=IP_ADDRESS... --使用指定的DNS服务器</li>
+<li>--dns-search=DOMAIN... --指定DNS搜索域</li>
+</ul></li>
+<li><p>仅容器支持
+这一类配置只有在 <code>docker run</code> 的时候使用</p>
+
+<ul>
+<li>-h HOSTNAME or --hostname=HOSTNAME --配置容器主机名</li>
+<li>--link=CONTAINER_NAME:ALIAS --添加到另一个容器的链接</li>
+<li>更多参见文档</li>
+</ul></li>
+</ul>
+
+<p>基本配置就不多说了，这个在文档里都有说明。</p>
+
+<h5 id="toc_4">配置DNS</h5>
+
+<p>docker并没有为每一个容器专门定制，那么如何自定义容器的主机名和DNS配置呢，主要是在于利用虚拟文件来挂载到容器中作为相关的配置文件</p>
+
+<p>例如，在一个ubuntu容器中，通过执行</p>
+
+<pre><code>docker exec &lt;container_id&gt; mount</code></pre>
+
+<p>命令可以看到挂载信息</p>
+
+<p>这样可以在宿主主机DNS信息更新后，所有的容器可以通过<code>resolv.conf</code>文件来更新DNS信息。</p>
+
+<p>如果用户需要自己修改配置，可以利用上面提到的配置参数，例如：</p>
+
+<pre><code>-h HOSTNAME or --hostname=HOSTNAME 设定容器的主机名，但不会在容器外部看到。
+--link=CONTAINER_NAME:ALIAS 会在创建容器的时候，添加一个其他容器的主机名。</code></pre>
+
+<h4 id="toc_5">容器访问</h4>
+
+<p>容器的访问，主要是通过linux上的<code>iptables</code>防火墙来进行管理。主要分为容器和外部网络的相互通信，容器之间的通信。</p>
+
+<h5 id="toc_6">容器访问外部网络</h5>
+
+<p>容器访问外部网络首先需要本地系统的转发支持，也就是<code>ip-forward</code>需要打开。一般来说，容器是默认可以访问外部网络的。</p>
+
+<h5 id="toc_7">外部网络访问容器</h5>
+
+<p>外部访问容器，其实就是之前介绍的容器端口映射，默认情况下，端口没有映射，即外部无法访问容器内部。可以使用 <code>-p</code> 或 <code>-P</code> 参数来暴露容器需要暴露的端口。其本质也是修改<code>iptable</code>中的<code>nat</code>表，添加对应的规则。</p>
+
+<h5 id="toc_8">容器之间通信</h5>
+
+<p>容器之间的访问需要两反面的支持</p>
+
+<ul>
+<li>容器之间的网络拓扑是否已经互联。其实就是是否在同一个网桥上，默认都是连接到<code>docker0</code>网桥上。</li>
+<li>本地系统的<code>iptable</code>是否允许通过</li>
+</ul>
+
+<p>当docker启动服务的时候，默认会添加转发策略到<code>iptables</code>的FORWARD链上，这个策略是由配置<code>--icc=true|false</code>来决定的，缺省是<code>true</code>，所以默认情况下，不同容器之间是允许通过网络访问的。当然也可以考虑禁止。</p>
+
+<h4 id="toc_9">自定义相关配置</h4>
+
+<p>这部分包括自定义网桥，定制一个点对点(peer to peer)的连接等，这些都是在具体使用中遇到的需求，可以参见一些官方文档，这里不再说明。</p>
+
+<h4 id="toc_10">总结</h4>
+
+<p>docker网络部分主要为围绕内外通信展开，需要关注的也是这块，外部需要访问容器，这是docker存在的基础；容器需要连接外部，这是支持的前提。而一些相关配置则可以加强容器模块的独立性和透明性，例如只让另外一个容器访问而不让外部访问。这也涉及到了docker的另一个话题——安全。这个有时间后面再记录。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On 05 Apr 2015 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+
+</div>
+  
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>

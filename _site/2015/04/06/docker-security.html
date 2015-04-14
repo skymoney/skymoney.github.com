@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/bootstrap.min.js'></script>
+　　<title>Docker学习——安全相关</title>
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
+	<h1 class='text-center'>Docker学习——安全相关</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>docker</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>虚拟化</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p>作为一个虚拟化技术，docker在安全方面必然要有一定的措施，否则不同容器之间的访问会出现安全漏洞。本文主要从以下几个方面来介绍了docker的安全机制。</p>
+
+<h4 id="toc_1">内核空间</h4>
+
+<p>docker容器和lxc容器类似，当运行<code>docker run</code>启动一个容器的时候，后台docker会创建一个独立的命名空间(namepspace)和控制组(cgroup)集合。
+其中，命名空间(namespace)是基于linux内核的一个强大的实现。docker为每个容器创建了独立的命名空间，达到了和其他容器隔离的目的，使得容器好像在独立的操作系统中运行一样。</p>
+
+<p>命名空间包含了以下几个方面</p>
+
+<ul>
+<li>pid namespace</li>
+<li>net namespace</li>
+<li>ipc namespace</li>
+<li>mnt namespace</li>
+<li>uts namespace</li>
+<li>user namespace</li>
+</ul>
+
+<p>具体的介绍会在另外一篇docker文章阐述。这里由于是和安全相关，就不多说了。</p>
+
+<p>其次，在运行后，每个容器都有自己独有的网络栈，这也就代表着不能访问其他容器的socket或接口，当然，如果显式设置那是可以的。</p>
+
+<p>从上一篇文章中可以看到，docker服务启动后，会在宿主机上建立一个虚拟网桥，所有的容器都通过这个网桥接口通信。就像普通机器通过交换机通信一样。</p>
+
+<h4 id="toc_2">cgroup</h4>
+
+<p>控制组(control group)是linux容器机制的另外一个基石，负责实现资源的控制。关于控制组的介绍可以参见另外一篇文章，或者可以去网上看看相关blog，有很多。</p>
+
+<p>cgroup保证了每个容器可以共享宿主机的内存、cpu、带宽等资源，也保证了不至于一个容器占用过多的资源。</p>
+
+<p>尽管cgroup不是隔离容器之间的访问。但是，如果在多用户平台上，特别是PAAS层，cgroup可以有效防止诸如DDos之类的攻击，当检测到一个容器的异常的时候，可以保证其他容器的正常运行。</p>
+
+<h4 id="toc_3">docker服务端防护</h4>
+
+<p>在docker服务端，由于是root权限启动docker，所以在安全方面需要注意。</p>
+
+<p>首先，由于docker允许容器和宿主机实现文件映射而不对容器限制访问权限，这就可能让容器能获取宿主机上的敏感或核心文件信息。例如：在一个容器启动时，恶意用户将宿主机的<code>/</code>目录映射到容器的<code>/mnt</code>目录中，这样，容器就可以访问宿主机的文件系统并且任意修改。</p>
+
+<p>所以这就需要采取一定的应对措施。例如在启动容器的时候进行参数的检查。此外docker的REST API改成了使用Unix套接字机制取代了原先绑定在<code>127.0.0.1</code>上的TCP套接字，使用Unix权限来提高套接字的安全。</p>
+
+<p>但是服务端还是对某些恶意输入比较脆弱，例如使用<code>docker load</code>或<code>docker pull</code>来载入镜像。因为无法保证获取的这些镜像的安全性。在<code>docker 1.3.2</code>版本中，镜像现在是在一个非root启动的子进程中提取，这也算是迈出的第一步吧。</p>
+
+<p>最终的目标可能包括以下几个：</p>
+
+<ul>
+<li>容器的root用户映射到宿主机的非root用户，减少安全问题。</li>
+<li>允许docker服务在非root权限下运行。将那些需要特别权限的操作放到子进程中执行。</li>
+</ul>
+
+<p>最后，docker官方还建议最好采用专门的服务器来运行docker和相关的管理服务，而其他的业务则放到容器中运行。</p>
+
+<h4 id="toc_4">linux内核能力</h4>
+
+<p>linux内核的能力(capability)是一个比较强大的特性。可以提供更细粒度的权限访问控制。</p>
+
+<p>例如，一个web服务进程只需要绑定一个低于1024的端口的权限而并不需要root权限，所以只需要被授予<code>net_bind_service</code>能力即可。</p>
+
+<p>默认情况下，docker启动的容器，特别是裸(bare)容器被严格限制了。通常，在服务端上会运行一堆需要特别权限的进程，包括ssh、cron等。但容器不同，因为这些服务是由容器以外的系统来支持管理而不是由容器支持。比如：</p>
+
+<ul>
+<li>ssh访问需要由服务器上的ssh服务管理</li>
+<li>日志系统有docker或第三方服务管理</li>
+<li>网络也是由docker服务管理，一般不需要容器管理</li>
+</ul>
+
+<p>所以，大部分情况下，容器不需要root权限，只需要少数的能力，所以，容器可以禁用一些没必要的权限，例如</p>
+
+<ul>
+<li>禁止任何mount操作</li>
+<li>禁止直接访问本地主机的套接字</li>
+<li>禁止模块加载</li>
+<li>禁止访问文件系统的操作，例如修改文件所有者、修改文件属性等</li>
+</ul>
+
+<p>这也保证了，即便入侵者在一个容器里获取了root权限，也很难获取宿主机的root权限。</p>
+
+<p>默认的docker采用的是白名单机制，禁用了一些必需功能的其他权限，可以根据自身需求启用额外的权限。</p>
+
+<h4 id="toc_5">其他</h4>
+
+<p>除了上面介绍的几个方面外，docker还可以采用其他的安全机制来增强docker的安全性。例如TOMOYO、SELinux等。</p>
+
+<p>docker当前默认只启用了能力(capability)机制，用户当然还可以采用多种方案来加强docker的安全机制。</p>
+
+<h4 id="toc_6">总结</h4>
+
+<p>总体来说，docker目前还是比较安全的，特别如果注意到这方面并将容器设为非root来运行的话。此外也可以通过自己添加一些新的特性来保证docker的安全性。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On 06 Apr 2015 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+
+</div>
+  
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>

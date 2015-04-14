@@ -39,78 +39,50 @@
   <hr style="border-top:2px solid #aaa;">
   
   <div class='span6'>
-    <h3><a href="http://localhost:4000/2015/04/09/docker-arch.html">Docker学习——docker架构</a></h3>
-    <p class='muted'>Post On 09 Apr 2015</p>
+    <h3><a href="http://localhost:4000/2014/07/10/hmm-viterbi.html">数学之美:HMM学习——解码&Viterbi算法</a></h3>
+    <p class='muted'>Post On 10 Jul 2014</p>
     关键词
       <span class="label label-info blog_tag">
-        <strong>docker</strong>
+        <strong>数学</strong>
       </span>
     
       <span class="label label-info blog_tag">
-        <strong>虚拟化</strong>
+        <strong>HMM</strong>
       </span>
     
-    <p><strong>摘要:&nbsp;&nbsp;</strong>其实这篇文章应该在一开始就出现，不过之前由于一直在看docker的安全和网络部分，所以也就一直没写。现在也算是补全了<a href="http://www.skymoneyc.com/2015/04/09/docker-arch.html">阅读全文</a></p>
+    <p><strong>摘要:&nbsp;&nbsp;</strong>前面讨论了HMM模型一个基本应用——预测，现在又遇到了一个新的问题，如果给定HMM模型和观察序列，而且这个观察序列已经确定，那么是怎么样的隐藏状态序列最有可能得到观察序列，这就是HMM模型应用的第二个方面——解码，解码意思估计是说观察状态序列对应一个加密序列，隐藏状态序列对应实际序列，这样这个过程算是一个解码过程。<a href="http://www.skymoneyc.com/2014/07/10/hmm-viterbi.html">阅读全文</a></p>
     <hr style="border-top:1px solid #aaa;">
   </div>
   
   <div class='span6'>
-    <h3><a href="http://localhost:4000/2015/04/08/dockerfile.html">Docker学习——Dockerfile相关</a></h3>
-    <p class='muted'>Post On 08 Apr 2015</p>
+    <h3><a href="http://localhost:4000/2014/07/10/hmm-predict.html">数学之美: HMM学习——预测&Forword算法</a></h3>
+    <p class='muted'>Post On 10 Jul 2014</p>
     关键词
       <span class="label label-info blog_tag">
-        <strong>docker</strong>
+        <strong>数学</strong>
       </span>
     
       <span class="label label-info blog_tag">
-        <strong>虚拟化</strong>
+        <strong>HMM</strong>
       </span>
     
-    <p><strong>摘要:&nbsp;&nbsp;</strong>之前介绍的docker相关中，提到了docker的images可以通过docker pull来获取，也可以通过自己定义Dockerfile, 来构建，前一种比较简单，不多说，而后一种需要我们自己编写文件，在编写过程中需要有一些要注意。<a href="http://www.skymoneyc.com/2015/04/08/dockerfile.html">阅读全文</a></p>
+    <p><strong>摘要:&nbsp;&nbsp;</strong>上一篇讨论了HMM的基本概念和一些性质，HMM在现实中还是比较常见的，因此也带来一了一系列的HMM应用问题。HMM应用主要面向三个方面：预测、解码和学习。这篇主要讨论预测<a href="http://www.skymoneyc.com/2014/07/10/hmm-predict.html">阅读全文</a></p>
     <hr style="border-top:1px solid #aaa;">
   </div>
   
   <div class='span6'>
-    <h3><a href="http://localhost:4000/2015/04/06/docker-security.html">Docker学习——安全相关</a></h3>
-    <p class='muted'>Post On 06 Apr 2015</p>
+    <h3><a href="http://localhost:4000/2014/07/10/hmm-intro.html">数学之美：HMM学习——介绍</a></h3>
+    <p class='muted'>Post On 10 Jul 2014</p>
     关键词
       <span class="label label-info blog_tag">
-        <strong>docker</strong>
+        <strong>数学</strong>
       </span>
     
       <span class="label label-info blog_tag">
-        <strong>虚拟化</strong>
+        <strong>HMM</strong>
       </span>
     
-    <p><strong>摘要:&nbsp;&nbsp;</strong>作为一个虚拟化技术，docker在安全方面必然要有一定的措施，否则不同容器之间的访问会出现安全漏洞。本文主要从以下几个方面来介绍了docker的安全机制。<a href="http://www.skymoneyc.com/2015/04/06/docker-security.html">阅读全文</a></p>
-    <hr style="border-top:1px solid #aaa;">
-  </div>
-  
-  <div class='span6'>
-    <h3><a href="http://localhost:4000/2015/04/05/docker-network.html">Docker学习——docker网络相关</a></h3>
-    <p class='muted'>Post On 05 Apr 2015</p>
-    关键词
-      <span class="label label-info blog_tag">
-        <strong>docker</strong>
-      </span>
-    
-      <span class="label label-info blog_tag">
-        <strong>虚拟化</strong>
-      </span>
-    
-    <p><strong>摘要:&nbsp;&nbsp;</strong>之前简单介绍了docker的相关基础，包括安装、启动、挂载和交互，下面介绍以下docker网络方面的内容。<a href="http://www.skymoneyc.com/2015/04/05/docker-network.html">阅读全文</a></p>
-    <hr style="border-top:1px solid #aaa;">
-  </div>
-  
-  <div class='span6'>
-    <h3><a href="http://localhost:4000/2015/03/31/git-hook.html">Git Server(续)——hook与自动触发操作</a></h3>
-    <p class='muted'>Post On 31 Mar 2015</p>
-    关键词
-      <span class="label label-info blog_tag">
-        <strong>git</strong>
-      </span>
-    
-    <p><strong>摘要:&nbsp;&nbsp;</strong>在之前的一篇文章中，讨论了如何简单地搭建一个git server并通过http账号密码访问，而不是ssh key访问。在进一步的需求中，用户可能需要在提交代码后能立即在web上看到自己的代码，或者在项目中，需要能立即部署提交后的最新代码(有没有bug那是另一回事了)<a href="http://www.skymoneyc.com/2015/03/31/git-hook.html">阅读全文</a></p>
+    <p><strong>摘要:&nbsp;&nbsp;</strong>一直想写点关于数学方面的blog，这对于数据挖掘分析，NLP处理等都有着比较重要的作用，之前在CSDN上想写点HMM方面的文章，一直没写成，最近几天终于抽点时间完成了HMM的文章，加以整理，遂有这个系列文章<a href="http://www.skymoneyc.com/2014/07/10/hmm-intro.html">阅读全文</a></p>
     <hr style="border-top:1px solid #aaa;">
   </div>
   
@@ -118,14 +90,16 @@
     <div>
       <ul class='pager'>
   
-      <li class='previous'>
-        <span class="">&larr;Previous</span>
-      </li>
+         
+        <li class='previous pull-left'>
+          <a href="/page4">&larr;Previous</a>
+        </li>
+       
       
   
-      <li class='next pull-right'>
-        <a href="/page2">Next&rarr;</a>
-      </li>      
+      <li class='next'>
+        <span class="">Next&rarr;</span>
+      </li>
   
       </ul>
     </div>
