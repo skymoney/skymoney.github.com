@@ -1,0 +1,126 @@
+---
+title: Java监控&调试工具
+layout: blog
+description: 因为前几天在阿里的面试中被问到了这个问题，之前好像一直都没了解这方面的内容，所以就花了大半天时间来了解一下。包括了java内置的一些监控和调试工具，一般各个平台上JDK都会自带。
+tags: ['java']
+---
+<div id="mainContent" class="span8">
+	<h1 class='text-center'>Docker学习——docker架构</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>java</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p>因为前几天在阿里的面试中被问到了这个问题，之前好像一直都没了解这方面的内容，所以就花了大半天时间来了解一下。包括了java内置的一些监控和调试工具，一般各个平台上JDK都会自带。</p>
+
+<h4 id="toc_1">监控工具</h4>
+
+<h5 id="toc_2">jps</h5>
+
+<pre><code>查看jvm中所有进程的具体状态，包括进程ID，进程启动路径等。</code></pre>
+
+<p>常用参数：</p>
+
+<pre><code>-l：输出完整的包名
+-m：输出程序启动的命令行参数
+-v：输出程序完整的JVM参数</code></pre>
+
+<h5 id="toc_3">jstack</h5>
+
+<p>查看运行中java程序的java stack和native stack信息；或者在java程序崩溃后查看生成的core文件中的stack信息</p>
+
+<p>常用参数</p>
+
+<pre><code>-F：强制打印栈信息
+-l：打印关于锁的附加信息
+-m：打印java和native c/c++的所有栈信息</code></pre>
+
+<h5 id="toc_4">jinfo</h5>
+
+<p>查看当前运行的java程序的环境配置等信息，包括System属性和JVM信息</p>
+
+<h5 id="toc_5">jstat</h5>
+
+<p>对java程序的资源和性能进行实时的命令行的监控，包括了对堆和GC的监控等。</p>
+
+<p>常用参数如下所示</p>
+
+<img src="{{ site.url }}/assets/post_imgs/jaba_monitor/jstat_option.png" />
+
+<p>可以看到主要是查看gc情况和编译情况。</p>
+
+<p>一个输出的示例如下</p>
+
+<img src="{{ site.url }}/assets/post_imgs/jaba_monitor/jstat_demo.png" />
+
+<p>输出的内容一些字段说明如下</p>
+
+<pre><code>S0：Heap上的Survivor space 0区已使用空间的百分比
+S1：Heap上的Survivor space 1区已使用空间的百分比
+E：Heap上的Eden space区已使用空间的百分比
+O：Heap上的Old space区已使用空间的百分比
+P：Perm space区已使用空间的百分比
+YCG：从应用程序启动到采样时发生Young GC的次数
+YCGT：从应用程序启动到采样时Young GC所花费时间
+FGC：从应用程序启动到采样时发生Full GC的次数
+FGCT：从应用程序启动到采样时发生Full GC所花费的时间
+GCT：从应用程序启动到采样时用于垃圾回收的全部时间</code></pre>
+
+<p>在实际使用过程中，通过选择不同的<code>options</code>参数来得到gc过程中不同区(old，new，perm)的信息</p>
+
+<h5 id="toc_6">jstatd</h5>
+
+<p>jstatd是一个基于RMI的服务程序，用于监控JVM的资源创建和销毁。</p>
+
+<h5 id="toc_7">jmap</h5>
+
+<p>查看当前java运行程序的内存使用情况，包括Heap的配置情况，当前Heap的使用情况，GC算法等。配合下面的jhat可以以图像形式展示当前内存是否有问题。</p>
+
+<p>常用参数</p>
+
+<pre><code>-finalizerinfo：打印等候回收的对象的信息
+-heap：打印heap的概要信息
+-permstat： 打印Perm Gen的信息</code></pre>
+
+<p>示例：</p>
+
+<img src="{{ site.url }}/assets/post_imgs/jaba_monitor/jmap_demo.png" />
+
+<h5 id="toc_8">jmc</h5>
+
+<p>jmc(Java Mission Control)是一个GUI工具，提供了对连接了JMC的java进程的监控，运行jmc即可查看，下面是一个截图。</p>
+
+<img src="{{ site.url }}/assets/post_imgs/jaba_monitor/jmc_option.png" />
+
+<h5 id="toc_9">jhat</h5>
+
+<p>jhat(Java Heap Analysis Tool)用于分析Java进程中Heap的情况，这是一个离线分析的工具，提供了Html格式的结果展示，需要和上面的<code>jmap</code>配合使用。</p>
+
+<ul>
+<li>首先通过<code>jmap</code>导出一个进程的heap文件</li>
+<li><p>得到的map文件就可以通过<code>jhat</code>分析</p>
+
+<pre><code>jhat a.map</code></pre></li>
+<li><p>分析完毕后，可以访问得到的结果。默认：http://localhost:7000 访问。</p></li>
+</ul>
+
+<h5 id="toc_10">jconole</h5>
+
+<p>jconsole是基于JMX(Java Management Extensions)的实时图形化监测工具，利用了JMX提供了对Java程序的实时性能和资源监控。</p>
+
+<p>可以使用 <code>jconsole</code> 来启动监控进程。界面如下所示</p>
+
+<img src="{{ site.url }}/assets/post_imgs/java_monitor/jconole_demo.png" />
+
+<h4 id="toc_11">调试工具</h4>
+
+<h5 id="toc_12">jdb</h5>
+
+<p>java中调试工具和C/C++类似，有jdb，主要用于对java程序的步进调试，如果是一些集成IDE，例如Eclipse的话，可以GUI调试，也是用的jdb。</p>
+
+<p>具体用法就不说了，可以参考很多文章。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+<hr style="border-top:2px solid #dddddd;"/>
+
+</div>
