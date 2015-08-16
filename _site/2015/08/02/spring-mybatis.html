@@ -86,7 +86,7 @@ var _hmt = _hmt || [];
 
 <p>首先eclipse新建一个maven项目，类型就选archtype-webapp好了，如下：</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/mvn_new.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/mvn_new.png" />
 
 <p>后面依次填上<code>group id</code>和<code>artifact id</code>等信息，创建完毕。下面正式开始代码阶段。</p>
 
@@ -94,11 +94,11 @@ var _hmt = _hmt || [];
 
 <p>首先需要配置Spring，由于采用的是Spring MVC，因此需要在maven的pom.xml文件中加入以下依赖。</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_dependency.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/spring_dependency.png" />
 
 <p>之后我们需要创建Spring的配置文件，<code>web.xml</code>文件和<code>applicationContext.xml</code>文件配置简单如下：</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_context.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/spring_context.png" />
 
 <p>之后新建<code>src/main/java</code>目录并在当中创建如下的package结构：</p>
 
@@ -139,7 +139,7 @@ Entity包</li>
 
 <p>注意，需要在配置文件中标记需要扫描的package，之后spring就会在这些package中扫描具有annotation的类并装载。如下：</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_anno_scan.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/spring_anno_scan.png" />
 
 <p>基本的结构已经完成，后面再开始MyBatis相关的配置。</p>
 
@@ -149,11 +149,11 @@ Entity包</li>
 
 <p>首先是配置Mybatis的配置文件，主要定义数据源和Mapper文件，简单配置如下：</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/mybatis_conf.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/mybatis_conf.png" />
 
 <p>之后配置Mapper的XML文件，这个文件主要用来和数据库进行交互，一般的sql都会在这里进行配置。一个简单的示例如下：</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/mybatis_mapper.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/mybatis_mapper.png" />
 
 <p>可以看到，在xml文件里，基本就是一条sql对应一个tag，tag标签也可以对应定义的数据类型。在每个tag中，定义好参数和sql，mybatis就会完成sql查询和对象的映射工作。</p>
 
@@ -161,7 +161,7 @@ Entity包</li>
 
 <p>一般来说独立的mybatis项目通过一个<code>SqlSessionFactory</code>来构建Session访问数据库，集成到Spring中，便会纳入到Spring的管理中，同时也可以利用起Spring的事务管理，集成的配置如下</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_mybatis.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/spring_mybatis.png" />
 
 <p>这里需要注意的是，mybatis的数据源和spring的事务数据源需要保证一致才能使用Spring的事务，此外，最近的一个实验表明使用了Mybatis后，spring事务的超时设置无效，比如<code>@Transactional(timeout=2)</code>这种设置是无法判断超时的，目前还没有比较好的解决方案，要么另开一个jdbctemplate的连接，要么就无视超时。。。</p>
 
@@ -169,21 +169,21 @@ Entity包</li>
 
 <p>一般来说，controller层负责对请求的处理，拿到处理后数据的返回等。一般是返回一个<code>ModelAndView</code>或者<code>Model</code>对象给servlet，最终解析后返回给用户。在我们这个例子中是一个RESTful系统，因此并不需要有jsp页面来渲染，这里用到了spring3.x中新加的annotation——@ResponseBody，这个annotation会将返回的内容按照合适的格式进行组装并直接返回。当然，如果需要返回json数据，还需要json支持，一般常用的是<code>jackson</code>，具体代码和pom配置如下：</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_controller.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/spring_controller.png" />
 
 <p>对应的jackson pom文件如下:</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/jackson_pom.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/jackson_pom.png" />
 
 <h4 id="toc_8">运行</h4>
 
 <p>基本上整个流程可以打通了，现在可以试试最终效果，部署项目到tomcat中，然后访问<code>http://&lt;tomcat_host&gt;:&lt;tomcat_port&gt;/StudentREST/api/student/1</code>，可以看到对应的输出：</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/api_visit.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/api_visit.png" />
 
 <p>查看一下Response：</p>
 
-<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/api_response.png" />
+<img src="http://www.skymoneyc.com/assets/post_imgs/spring_mybatis/api_response.png" />
 
 <p>的确是application/json，说明返回的是json数据。</p>
 
