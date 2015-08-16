@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/bootstrap.min.js'></script>
+    <title>YAML的一些介绍</title>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?f6811b3e8af0be213726ac36fadf0fd3";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
+	<h1 class='text-center'>YAML的一些介绍</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>yaml</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p>yaml是一种数据序列化语言，主要用来做数据序列化和传输的，同时也可以应用在配置文件中。</p>
+
+<h4 id="toc_1">介绍</h4>
+
+<p>和目前比较多的两种标记语言——xml&amp;json相比，yaml首先宣称自己不是标记语言(YAML Ain’t a Markup Language)，不过在一些场景下yaml也起到了标记语言的作用，比如配置文件，序列化等。所以可以看到，yaml在实际使用中完全可以当成一种标记语言来使用。</p>
+
+<p>yaml在设计之初，目的就很明显：</p>
+
+<ul>
+<li>保证良好的可读性。</li>
+<li>语言之间yaml数据的传输便携性。</li>
+<li>能适配语言的数据结构。</li>
+<li>支持泛型工具。</li>
+<li>支持串行处理。</li>
+<li>易表达和易扩展。</li>
+<li>易实现和使用。</li>
+</ul>
+
+<h5 id="toc_2">对比xml</h5>
+
+<p>yaml可以看做是xml的一个竞争对手。xml已经应用了很长时间，但越来越表现得繁琐和累赘，虽然xml主要被设计用来表示结构化数据，yaml主要用来表示数据序列化，但yaml也可以替代xml。</p>
+
+<h5 id="toc_3">对比json</h5>
+
+<p>json和yaml设计有一些共同点，比如都是为了可读性和格式转换，但是依然有些不同。json更注重简单和通用，因此json很容易生成和转换，代价就是减少了可读性，同时json也更注重在不同语言中的兼容性和易处理性，也就是说支持的数据结构也有限。</p>
+
+<p>而yaml则更注重可读性和对数据的序列化，因此yaml的文件也就更具有可读性，相应的，也就更难操作(生成和转换)，此外，yaml支持更复杂的数据表示结构。</p>
+
+<p>所以，yaml可以看做是json的一个超集，yaml中可以嵌入json，反过来则不行。</p>
+
+<h4 id="toc_4">语法</h4>
+
+<p>yaml中主要用到了三种数据结构</p>
+
+<ul>
+<li>sequence：主要用来表示数组等结构</li>
+<li>scalar：表示标量，例如数字，字符等。</li>
+<li>mapping：key-value对</li>
+</ul>
+
+<p>此外，还包括了注释，多文档，锚等结构。</p>
+
+<h5 id="toc_5">sequence</h5>
+
+<p>一个样例表示如下：</p>
+
+<pre><code>- test
+- yaml
+- sequence</code></pre>
+
+<p>或者也可以这样：</p>
+
+<pre><code>[test, yaml, sequence]</code></pre>
+
+<p>对于更复杂的表示，例如mapping的sequence，sequence的sequence，简单的例子如下：</p>
+
+<pre><code>- [test, yaml]
+- [yaml, sequence]</code></pre>
+
+<p>mapping的sequence：</p>
+
+<pre><code>- key: value
+- {key: value, key2: value2}</code></pre>
+
+<h5 id="toc_6">scalar</h5>
+
+<p>scalar代表了那些标量值，例如数字，字符等，</p>
+
+<h5 id="toc_7">mapping</h5>
+
+<p>mapping可以看成类似一般语言中的Map结构，具有key-value对的一种表示。</p>
+
+<p>一个简单的示例如下所示：</p>
+
+<pre><code>---
+name: cheng
+...</code></pre>
+
+<p>这里，<code>---</code>和<code>...</code>是一个文档的开始和结束标志。</p>
+
+<p>更复杂的示例如下</p>
+
+<pre><code>---
+- ?[a, b]: value
+- singel_key: [a, b]
+...</code></pre>
+
+<p>可以看到，yaml中key允许为一个sequence，如果是sequence，则需要加上一个<code>?</code>来做说明。</p>
+
+<h5 id="toc_8">其他语法</h5>
+
+<p>yaml当然支持其他的一些语法，比如注释，anchor(锚)等，具体可以参考这里的文档说明 <a href="http://www.yaml.org/spec/1.2/spec.html">http://www.yaml.org/spec/1.2/spec.html</a></p>
+
+<h4 id="toc_9">接口</h4>
+
+<p>yaml目前已经有了针对大部分语言的接口库，例如java的jyaml，python的PyYaml，这里提一下ruby，因为ruby中默认是用yaml来作为配置文件，ror中也是如此，可以说ruby是对yaml最友好的语言了。详细的可以访问<a href="http://www.yaml.org/">yaml官方网站</a>。</p>
+
+<p>过去是静态语言+xml，比如在Java的SSH框架中大量用了xml作为配置文件，但在新的框架中，特别是动态语言的框架中，yaml逐渐占据了一席之地，相比xml，json等，yaml更注重可读性和数据性。未来yaml也是会越来越得到应用的吧。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On 13 Jun 2015 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+<hr style="border-top:2px solid #dddddd;"/>
+</div>
+  
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2023299"></script>
+<!-- UY END -->
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>

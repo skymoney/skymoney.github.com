@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/bootstrap.min.js'></script>
+    <title>Spring MVC+MyBatis+Maven构建RESTful接口</title>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?f6811b3e8af0be213726ac36fadf0fd3";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
+	<h1 class='text-center'>Spring MVC+MyBatis+Maven构建RESTful接口</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>java</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<h3 id="toc_0">1，前言</h3>
+
+<p>之前大部分是用的Python做Web开发，java的话则是用的<a href="http://www.playframework.org">play</a>，所以一直没有系统学习过经典的SSH(Spring， Struts2，Hibernate)，虽然个人觉得在项目快速迭代开发上，SSH略显笨重，但不可否认的是对于集成和管理要求比较高的大型项目来说，SSH不失为一个解决方案，特别是Spring，依然深受程序员们的青睐。</p>
+
+<p>最近实习项目上需要用到这些框架，没办法，大型项目公司一般不会尝试新的框架而是采用比较成熟的框架。所以就花了点时间整理和学习了一下，然后通过一个简单的RESTful接口实现来说明整个框架。</p>
+
+<h3 id="toc_1">2，框架&amp;技术介绍</h3>
+
+<p>为啥SSH中选了Spring，当然是项目需要，其他两个不需要:(，不过之前一直以为Spring只是一个简单的MVC框架，其实现在Spring已经有很大的生态环境了，而且Spring MVC和Struts(1, 2)比，也是不落下风的。于是只用了Spring MVC。</p>
+
+<p>ORM那层主要是Hibernate和Mybatis(iBatis)，以前用过一些Hibernate，觉得和Django里的ORM类似，一个Entity对应一个Table，sql也是用hql来实现。相比之下，Mybatis就显得灵活多了，不需要Entity和Table的对应，通过Mapper文件实现了sql和Entity的转化，这样可以更自由灵活地操纵sql来获取数据。</p>
+
+<p>Maven就不多说了，基本没有不知道的吧，项目管理神器，有了maven，瞬间世界变得清静了好多。。。</p>
+
+<p>RESTful, 在服务化越来越火热的今天也是越来越火，越来越多的接口采用了RESTful风格，对于RESTful实现的一个经典case，建议看下<a href="https://developer.github.com/v3/">github的v3api</a>，个人觉得是RESTful设计的一个典型代表。</p>
+
+<h3 id="toc_2">3，实现</h3>
+
+<p>扯了这么多框架和技术，下面该上实际项目了，<em>Talk is cheap, show me the code</em>.</p>
+
+<h4 id="toc_3">3.1准备</h4>
+
+<p>开发环境如下：</p>
+
+<ul>
+	<li>OS: Mac OS X 10.10.3</li>
+	<li>JDK： oracle jdk 1.8.25</li>
+	<li>Maven: 3.2.2</li>
+	<li>Spring: 3.2.10</li>
+	<li>Mybatis: 3.3.0</li>
+	<li>IDE: Eclipse 4.4 Luna</li>
+</ul>
+
+<p>那这个RESTful例子就选学生和学校作为Resources，一个学校里有很多学生，因此学校和学生就是一对多的关系，这只是一个简单的Demo，请不要吐槽太简单。。。</p>
+
+<p>首先eclipse新建一个maven项目，类型就选archtype-webapp好了，如下：</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/mvn_new.png" />
+
+<p>后面依次填上<code>group id</code>和<code>artifact id</code>等信息，创建完毕。下面正式开始代码阶段。</p>
+
+<h4 id="toc_4">3.2配置Spring</h4>
+
+<p>首先需要配置Spring，由于采用的是Spring MVC，因此需要在maven的pom.xml文件中加入以下依赖。</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_dependency.png" />
+
+<p>之后我们需要创建Spring的配置文件，<code>web.xml</code>文件和<code>applicationContext.xml</code>文件配置简单如下：</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_context.png" />
+
+<p>之后新建<code>src/main/java</code>目录并在当中创建如下的package结构：</p>
+
+<ul>
+<li>com/skymoneyc/stuapi/controller 
+负责Controller层</li>
+<li>com/skymoneyc/stuapi/service
+Service接口</li>
+<li>com/skymoneyc/stuapi/serviceimpl
+Service实现</li>
+<li>com/skymoneyc/stuapi/dao
+DAO层</li>
+<li>com/skymoneyc/stuapi/daoimpl
+DAO层实现</li>
+<li>com/skymoneyc/stuapi/mapper
+Mybatis Mapper接口</li>
+<li>com/skymoneyc/stuapi/entity
+Entity包</li>
+</ul>
+
+<p>需要的entity包括如下几个：</p>
+
+<ul>
+<li>Student
+包括的字段属性包括：id;name;address;school</li>
+<li>School
+包括的字段属性包括：id;name;address</li>
+</ul>
+
+<p>注意，这里为了减少配置文件的编写，我们可以较多使用spring的annotation，在Spring3.X中，主要有这几个Annotation可以标记类：</p>
+
+<ul>
+<li>@Component 按照Spring的划分，Component是一个通用的Annotation，可以代表任何一个bean，一般如果不知道具体应用哪个annotation，直接使用Component就行。</li>
+<li>@Controller 按照定义，Controller表示controller层的annotation，任何普通类被打上controller的annotation后，spring会将其解析为controller层的bean。这个和下面的两个annotation是留作未来的Spring扩展。</li>
+<li>@Service 同上，不过是代表service层的annotation。</li>
+<li>@Repository 同上，代表model，dao等数据交互层的annotation。</li>
+</ul>
+
+<p>注意，需要在配置文件中标记需要扫描的package，之后spring就会在这些package中扫描具有annotation的类并装载。如下：</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_anno_scan.png" />
+
+<p>基本的结构已经完成，后面再开始MyBatis相关的配置。</p>
+
+<h4 id="toc_5">3.3配置Mybatis</h4>
+
+<p>Mybatis主要负责MVC中的M，相比于Hibernate，mybatis在sql方面更灵活，也不需要Entity和数据库表的对应，不过一般来说尽量把Entity和数据库表对应，这样比较方便。</p>
+
+<p>首先是配置Mybatis的配置文件，主要定义数据源和Mapper文件，简单配置如下：</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/mybatis_conf.png" />
+
+<p>之后配置Mapper的XML文件，这个文件主要用来和数据库进行交互，一般的sql都会在这里进行配置。一个简单的示例如下：</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/mybatis_mapper.png" />
+
+<p>可以看到，在xml文件里，基本就是一条sql对应一个tag，tag标签也可以对应定义的数据类型。在每个tag中，定义好参数和sql，mybatis就会完成sql查询和对象的映射工作。</p>
+
+<h4 id="toc_6">3.4整合</h4>
+
+<p>一般来说独立的mybatis项目通过一个<code>SqlSessionFactory</code>来构建Session访问数据库，集成到Spring中，便会纳入到Spring的管理中，同时也可以利用起Spring的事务管理，集成的配置如下</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_mybatis.png" />
+
+<p>这里需要注意的是，mybatis的数据源和spring的事务数据源需要保证一致才能使用Spring的事务，此外，最近的一个实验表明使用了Mybatis后，spring事务的超时设置无效，比如<code>@Transactional(timeout=2)</code>这种设置是无法判断超时的，目前还没有比较好的解决方案，要么另开一个jdbctemplate的连接，要么就无视超时。。。</p>
+
+<h4 id="toc_7">3.5Controller层的一些说明</h4>
+
+<p>一般来说，controller层负责对请求的处理，拿到处理后数据的返回等。一般是返回一个<code>ModelAndView</code>或者<code>Model</code>对象给servlet，最终解析后返回给用户。在我们这个例子中是一个RESTful系统，因此并不需要有jsp页面来渲染，这里用到了spring3.x中新加的annotation——@ResponseBody，这个annotation会将返回的内容按照合适的格式进行组装并直接返回。当然，如果需要返回json数据，还需要json支持，一般常用的是<code>jackson</code>，具体代码和pom配置如下：</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/spring_controller.png" />
+
+<p>对应的jackson pom文件如下:</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/jackson_pom.png" />
+
+<h4 id="toc_8">运行</h4>
+
+<p>基本上整个流程可以打通了，现在可以试试最终效果，部署项目到tomcat中，然后访问<code>http://&lt;tomcat_host&gt;:&lt;tomcat_port&gt;/StudentREST/api/student/1</code>，可以看到对应的输出：</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/api_visit.png" />
+
+<p>查看一下Response：</p>
+
+<img src="http://localhost:4000/assets/post_imgs/spring_mybatis/api_response.png" />
+
+<p>的确是application/json，说明返回的是json数据。</p>
+
+<p>当然，这只是一个GET请求，还有更多的资源方法，这里就不赘述，源码可以访问如下Github获取。</p>
+
+<h3 id="toc_9">4，总结</h3>
+
+<p>和其他的一些Web框架，包括Python的django，flask，Java的Play相比，Spring无疑要重不少，但优势则是成熟，各部分的分工明确，开发流程很成熟，也有众多的第三方库和插件来使用，比如项目可能需要加个定时任务什么的都比较方便。mybatis相比于hibernate，更注重sql的自定义，可以很方便地根据需求来定义sql，入门比hibernate低。</p>
+
+<hr>
+<p>PS: 一些踩过的坑</p>
+<p>1,spring junit4 版本4.5以上，否则无法运行。</p>
+<p>2, 集成Mybatis后，Spring事务的超时无法起效。</p>
+<p>3, 异步线程中的事务操作需要注意。</p>
+
+  
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2023299"></script>
+<!-- UY END -->
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>
