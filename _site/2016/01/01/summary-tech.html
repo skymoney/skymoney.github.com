@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/bootstrap.min.js'></script>
+    <title>2015总结——技术生活</title>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?f6811b3e8af0be213726ac36fadf0fd3";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
+	<h1 class='text-center'>2015总结——技术生活篇</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>感悟</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p>技术永远是码农聊天的一个话题，套用一句话，唯一不变的就是变，同样，不变的技术就是学习，所以还是需要不断学习不断充实自己。</p>
+
+<p>2015年回顾一下，发现自己更多地是偏向项目和实习，曾经在本科和研一时一直想着做些研究性工作，现在看来还是太naive了，只能说个人并没有花太多时间在研究性工作上，事实上基础性的工作还是要有的，希望后面有更多基础性的积累吧。</p>
+
+<h3 id="toc_0">年初——公有云，docker</h3>
+
+<p>从14年10月一直到年初(3月份左右)，一直在百度实习，主要做的是BAE(Baidu App Engine)向公有云(BCC)上迁移的任务，包括从旧平台上代码迁移，bugfix，对内平台搭建和持续集成的构建等，在这期间比较深入接触了Docker和PAAS平台，包括后来在北京的QCon上也参加了不少容器和docker方面的讲座。之前的blog也有一个系列专门介绍了docker。</p>
+
+<p>容器和虚拟化并不是一个新概念，之前的linux上的lxc就是一个典型的容器虚拟化，docker是这两年火热起来的虚拟化技术，主要在于docker的轻量级和面向应用，这里面向应用是指更关注应用的虚拟化，可以方便用户随时使用应用服务等，而不是像VM那种操作系统级的虚拟化。现在的很多PAAS平台都采用了docker技术，比如BAE，用户部署的每个应用都运行在一个docker中，这样可以避免应用之间的冲突和保证资源的独立性。因为docker的基础就是cgroup和namespace。</p>
+
+<p>在百度呆了将近半年，3月的时候因学校有事只能结束实习，当时manager还说挺可惜的，因为后续就开始了bae的重构，而且时间也比较尴尬，如果到暑假的话说不定就可以转正。不过后来的BAT缩招事件，也算是命吧。</p>
+
+<h3 id="toc_1">年中——在线编程，代码执行</h3>
+
+<p>从百度回来后，继续一个项目，其实这个项目在年初一月就开始了，3月是正式使用的时期，主要是提供了一个在线Python编程平台，面向的主要是一些学生，这个平台其实结构很简单，学生在网页上编写代码并提交后，在服务器上运行提交的代码，主要是跑事先设置好的测试用例，结果最终返回。类似现在的很多的OJ(Online Judge).</p>
+
+<p>在这个平台中，首次采用了自定义的OAuth2的系统，关于OAuth，之前的Blog有这方面的介绍，包括理论和实现。后来在实际使用中，起初是正常的，后来在一个特定的环境下发现有个比较严重的bug，在一个局域网环境下，如果系统都是Ghost系统，可能会出现认证混乱的问题，原因在于Ghost系统的MAC地址为空(可能是Ghost问题)，所以如果A用户认证后，B用户再认证，这个时候，A用户拿到的信息可能就是B用户的信息，这个问题其实是很严重的，不过出现前提比较诡异，一直没发现。</p>
+
+<p>系统的一个核心是代码执行，开始是最简单的调用命令，提交代码保存成py文件，然后调用<code>python</code>命令执行，得到结果并返回。这种做法实际是新开一个python进程，所以在大量访问的情况下可能会性能上有影响，后面会继续说下这个问题。</p>
+
+<h3 id="toc_2">暑假——Java，数据</h3>
+
+<p>暑假两个月本来打算在学校好好看点技术准备下半年招聘，后来种种原因去了阿里实习，去的云计算部门，做数据平台的开发，主要是Java Web开发，具体内容就不多说了，说点其他的。阿里的氛围的确很好，内部很注重分享和交流。当然加班也是特色，不过互联网公司加班应该是常态。干码农的早就有这种觉悟(笑(ku))。</p>
+
+<p>Java目前来看依然是开发的王者，成熟的社区和丰富的框架足以弥补Java在一些方面的性能不足和代码冗余。特别是一些轻量级的Web框架也减轻了Java开发的工作量。在阿里我们使用的Spring MVC+Mybatis， Spring MVC和Mybatis的使用示例可以参考我之前的一篇blog，相比于传统的SSH(Struts + Spring + Hibernate)，个人觉得这个更轻量级，上手也更容易点，当然也还是需要基本的Java Web和Spring的基础的。更轻量的Java框架则是Play，从最初在eBay实习接触到Play1.x，到现在的Play2.x，Play一直算是一个比较轻量的Web框架，当然2.x版本更多的是投向了Scala，导致我个人觉得完全不适应而一直使用1.x。</p>
+
+<p>关于Java，需要学的还有很多，最近也没太多精力放在Java上，可能过完年会投入一些时间到这个上面吧，毕竟是以后吃饭的主要工具。</p>
+
+<h3 id="toc_3">年末——Python&amp;量化</h3>
+
+<p>实习回来后先是秋招，具体可以参见另外一篇工作总结。</p>
+
+<p>秋招差不多后又是开始一个新的项目，这次和之前的编程项目类似，不过是量化平台，主要做一个量化编程平台，这个就需要涉及一些量化交易知识，这方面国内看来还不是很热门，国外已经很成熟了，我们也是看了国外一个量化网站(<a href="http:/www.quantopian.com">QuantOpian</a>)受到启发。国内目前也有几家类似的，不过都还处在起步阶段，受众还不是很多，功能都类似。</p>
+
+<p>这一类在线编程平台主要在于代码执行，简单的如上文所述，每次用户提交后调用命令开一个运行线程，结束后返回结果，这种方式在大量提交请求的情况下可能会比较低效。目前在量化系统中我们利用的是回测库自带的调用方法，以普通调用的形式完成运行。当然，对于一般提交量的程序运行，这个是足够的。</p>
+
+<p>最近我考虑的方法是利用docker，在服务器上和用户账号挂钩，每个用户会为他开一个docker虚机，持有基本的资源(CPU，内存，硬盘等)，后面用户每次提交代码后都会在虚机中运行，实现就是提交到一个共享目录下，虚机中能访问提交的代码，运行后结果返回。虚机的运行状态也处在系统监控下，用户在浏览器端会定时发送socket作为一个heartbeat，这样在用户退出后虚机也会对应关闭，等待下次登录启动。</p>
+
+<p>这样做其实还是会消耗服务器资源，但相比之前的直接进程方法，这个已经好多了。首先从安全角度来看，用户代码在虚机中运行，即便出现恶意代码，只是在虚机层影响，不会对其他用户虚机和宿主机有影响。其次，虚机的开销也很小，docker官方宣称一个服务器可以支持1000个docker实例，想像一下一台服务器开1000个docker实例和开1000个python线程的对比，从我个人角度来说比较接受前者，而且实例可以分布式扩容。</p>
+
+<p>当然这个方案我是最近构思出来，可能需要一段时间来实现和验证，而且对于小访问量级的，可能两者差别不是很大，不过至少也算是对最原始方案的一个改进吧。</p>
+
+<p>再说说量化吧，这个词其实很早就听过了，这两年在国内也慢慢多起来，说实话，个人对金融证券零基础，因为这个项目才开始了解这方面，虽然也没了解多少。。不过跳出码农的思维看看其他行业还是有好处的。量化在国外已经比较成熟，但在国内还没有成规模，所以量化交易平台还是需要进一步发展的。简单来说，量化做的就是将以前人做的交易股票基金等活动交给计算机来完成，量化交易员需要做的是完成一个策略，这个策略规定了交易初始数据，如初始仓位资金，起始结束日期等，以及每个交易事件具体的买入卖出策略。这个策略会根据已有的数据进行回测(backtesting)，回测效果如果还不错那就可以正式接入到证券或交易所进行交易了。量化避免了人每天花大量时间在没有意义的刷新行情数据上，比较有效地完成股票或基金交易。</p>
+
+
+<p class='muted' style='font-size: 20px;'>Post On 01 Jan 2016 @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+</div>
+
+  
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2023299"></script>
+<!-- UY END -->
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>
