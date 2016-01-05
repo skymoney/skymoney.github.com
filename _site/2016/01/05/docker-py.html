@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+　　 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/bootstrap.min.css'>
+    <link rel="stylesheet" type="text/css" media='screen' href='http://www.skymoneyc.com/css/site_style.css'>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/jquery-1.9.1.min.js'></script>
+    <script type="text/javascript" src='http://www.skymoneyc.com/js/bootstrap.min.js'></script>
+    <title>docker-py使用中的一些坑</title>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?f6811b3e8af0be213726ac36fadf0fd3";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+<body>
+	<div class='navbar navbar-inverse navbar-fixed-top'>
+        <div class='navbar-inner'>
+          <div class='container'>
+            <a href="https://github.com/skymoney"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+            <div class='nav-collapse collapse'>
+              <ul class='nav'>
+                <li>
+                  <a href="../../../../index.html">首页</a>
+                </li>
+                <li>
+                  <a href="../../../../blog_tab.html">博客</a>
+                </li>
+                <li>
+                  <a href="../project.html">项目</a>
+                </li>
+                <li>
+                  <a href="../../../../about.html">关于</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+</div>
+  　<div id="mainContent" class="span8">
+	<h1 class='text-center'>docker-py使用中的一些坑</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>docker</span>
+	<span class='muted font_large'>python</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<p>docker的相关介绍就不多说了，具体也可以看之前的一系列文章，之前介绍的都是在shell终端中操作docker，但在很多场景中需要在程序中使用，所以就需要具体语言的API支持，最近使用了一下Python版的sdk，也遇到一些坑，记录一下以后备用。</p>
+
+<p>python的docker api就是docker-py，在docker的官网上就有链接，github地址<a href="https://github.com/docker/docker-py">点击这里</a>，安装之类的就不多说了，按照官网的说明一步步来就行。需要说明一下的是，Mac(Windows上也是)平台上docker的安装之前是一个叫boot2docker的包装器，其实就是在VirtualBox中启动一个ubuntu虚机然后在这个虚机中运行docker，新版本的docker安装器更名为Docker Tool Box，增加了<code>Docker Quick Terminal</code>和<code>Kitematic</code>，虽然更方便操作但对api来说有了点变动。</p>
+
+<h4 id="toc_0">环境</h4>
+
+<p>测试环境如下</p>
+
+<ul>
+<li>OS: OS X 10.11.2</li>
+<li>Docker: 1.8.1</li>
+<li>Python: 2.7.10</li>
+<li>Docker-py: 1.6.0</li>
+</ul>
+
+<h4 id="toc_1">基本操作</h4>
+
+<p>首先启动docker，如下：</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/docker_py/docker_start.png" />
+
+<p>这里注意，新版本的工具启动后不会显示环境变量，所以需要手动加入，可能有解决方法但目前还没找到。这个环境变量是必需的，否则在后续的SDK中无法连接。</p>
+
+<p>这里环境变量如下：</p>
+
+<ul>
+<li>DOCKER_HOST=tcp://192.168.99.100</li>
+<li>DOCKER_TLS_VERIFY=1</li>
+<li>DOCKER_CERT_PATH=&lt;path_to_your_vm&gt;</li>
+</ul>
+
+<p>如果是在脚本里，最好在脚本开头设置一下，这样可以保证变量在系统环境中，如下所示：</p>
+
+<pre><code class="language-none">import os
+os.environ[&#39;DOCKER_HOST&#39;] = &#39;tcp://192.168.99.100:2376&#39;
+os.environ[&#39;DOCKER_CERT_PATH&#39;] = &#39;/Users/cheng/.docker/machine/machines/default/&#39;
+os.environ[&#39;DOCKER_TLS_VERIFY&#39;] = &#39;1&#39;</code></pre>
+
+<p>之后使用API，注意，这里参数使用官方推荐的<code>kwargs_from_env</code>方法，这样读取上面设置的环境变量，读取后如下:</p>
+<pre><code class="language-none">{'tls': <docker.tls.TLSConfig object at 0x108e54250>, 'version': '1.20', 'base_url': 'tcp://192.168.99.100:2376'}
+</code></pre>
+
+<p>但这样是不行的，直接运行会报错：</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/docker_py/docker_py_1.png" />
+
+<p>这个错误官网有说明，是主机名和ip不一致的问题，一个解决方案是在<code>/etc/hosts</code>中添加映射，但我是发现好像不起作用，就用了第二种，禁用了域名检查，如下：</p>
+
+<pre><code class="language-none">kw = kwargs_from_env()
+kw[&#39;tls&#39;].assert_hostname = False</code></pre>
+
+<p>按官网的说法，这个可能会有安全问题，后面可能需要再看下。</p>
+
+<p>之后再运行，发现又报错：</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/docker_py/docker_py_2.png" />
+
+<p>这里的错误很明显，版本不一致，实际上看了下版本都是一致的，搞不懂是从哪读取的版本信息，不过既然提示了，就直接修改，在参数中显式指明版本，如下：</p>
+
+<pre><code class="language-none">kw[&#39;version&#39;] = &#39;1.20&#39;</code></pre>
+
+<p>这样就可以了，正确输出如下：</p>
+
+<img src="http://www.skymoneyc.com/assets/post_imgs/docker_py/docker_py_3.png" />
+
+<p>完整的代码如下：</p>
+
+<pre><code class="language-none">#-*- coding:utf-8 -*-
+
+import os
+from docker.client import Client
+from docker.utils import kwargs_from_env
+
+os.environ[&#39;DOCKER_HOST&#39;] = &#39;tcp://192.168.99.100:2376&#39;
+os.environ[&#39;DOCKER_CERT_PATH&#39;] = &#39;/Users/cheng/.docker/machine/machines/default/&#39;
+os.environ[&#39;DOCKER_TLS_VERIFY&#39;] = &#39;1&#39;
+
+kw = kwargs_from_env()
+kw[&#39;tls&#39;].assert_hostname = False
+
+kw[&#39;version&#39;] = &#39;1.20&#39;
+
+client = Client(**kw)
+
+print client.version()</code></pre>
+
+<h4 id="toc_2">几个坑的总结</h4>
+
+<p>因为官网上使用的是旧版本的docker作为示例，因此有的设置有些不同，如下几条：</p>
+
+<ul>
+<li>一般<code>Client</code>参数使用<code>base_url</code>来指定docker的socket，但在<code>Mac</code>和<code>Windows</code>平台上因为VM原因，所以socket无法直接获得，需要<code>kwargs_from_env</code>来获取系统变量</li>
+<li>在系统变量中，<code>DOCKER_HOST</code>值一般是指VM的地址，协议是<code>http</code>、<code>https</code>或<code>tcp</code>，不过在docker 1.2版本后，因为使用SSL，所以一般是<code>https</code>或者<code>tcp</code>，两个都可以</li>
+<li>在我测试的版本中，会有版本不一致错误，这个可以通过手动设置来解决，不过根本原因还没找到，可能后面需要再研究一下</li>
+</ul>
+
+
+</div>
+  
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2023299"></script>
+<!-- UY END -->
+<div id='footer-wrapper' class='span8'>
+  <footer role='contentinfo'>
+    <hr style="border-top:2px solid #aaa;">
+    <span class='muted text-center' style='padding-left: 30%; font-size: 20px'>Powered By <a href='http://jekyllrb.com/'>JekyII</a>&nbsp;and&nbsp;<a href="http://www.github.com">GitHub</a>&nbsp;&nbsp;Author@<a href="http://www.skymoneyc.com">SkyMoney</a></span>
+  </footer>
+</div>
+</body>
+</html>
