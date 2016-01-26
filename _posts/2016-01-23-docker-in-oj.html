@@ -1,7 +1,7 @@
 ---
 title: OJ系统中的虚拟化应用
 layout: blog
-description: 
+description: 最近在重新开发一个在线编程系统，之前系统也在另一篇blog中有提到，这类系统的核心在于判题机制，即用户在提交后如何对提交代码进行<strong>安全</strong>判题
 tags: ['docker', 'python']
 ---
 <div id="mainContent" class="span8">
@@ -12,7 +12,7 @@ tags: ['docker', 'python']
 	<span class='muted font_large'>python</span>
 	<hr style="border-top:2px solid #aaa;">
 
-<p>最近在重新开发一个在线编程系统，之前系统也在另一篇<a href="">blog</a>中有提到，这类系统的核心在于判题机制，即用户在提交后如何对提交代码进行<strong>安全</strong>判题。</p>
+<p>最近在重新开发一个在线编程系统，之前系统也在另一篇<a href="/2016/01/01/summary-tech.html">blog</a>中有提到，这类系统的核心在于判题机制，即用户在提交后如何对提交代码进行<strong>安全</strong>判题。</p>
 
 <p>在最开始的系统中，是直接将提交的代码保存成文件后新开一个进程执行，同时禁止使用一些系统模块，例如<code>os</code>，<code>sys</code>等，但这是一个很粗糙的方案，根本原因在于代码依然对服务器主机有访问权限，如果是root执行那就更危险了。</p>
 
