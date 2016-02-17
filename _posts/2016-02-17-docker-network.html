@@ -1,0 +1,74 @@
+---
+title:Cannot start container: no available ip addresses on network 问题解决 &amp;&amp; 迁移存储位置
+layout: blog
+description:最近在项目中使用docker碰到了一个问题：Cannot start container: no available ip addresses on network
+tags: ['docker']
+---
+<div id="mainContent" class="span8">
+	<h1 class='text-center'>OJ系统中的虚拟化应用</h1>
+	<hr style="border-top:1px solid #aaa;">
+	<span class='font_large'><strong>关键词:</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class='muted font_large'>docker</span>
+	<span class='muted font_large'>python</span>
+	<hr style="border-top:2px solid #aaa;">
+
+<h3 id="toc_0">Cannot start container: no available ip addresses on network 问题解决 &amp;&amp; 迁移存储位置</h3>
+
+<p>最近在项目中使用docker碰到了一个问题：</p>
+
+<div><pre><code class="language-none">Cannot start container: no available ip addresses on network</code></pre></div>
+
+<p>问题发生在创建container数目比较多，超过255个时，由于默认docker的网络为桥(bridge)模式，且网关最大ip分配数为255，所以当试图创建超过255个container时就会出现这个错误。</p>
+
+<p>解决方法也很简单，只需要修改一下网络配置，要么删掉默认的网桥新建一个，要么修改默认的网桥。这里用的是修改默认配置</p>
+
+<p>首先，停止docker</p>
+
+<div><pre><code class="language-none">$ sudo service docker stop</code></pre></div>
+
+<p>查看一下当前<code>docker0</code>网络情况</p>
+
+<div><pre><code class="language-none">$ ip addr show docker0</code></pre></div>
+
+<p>将<code>docker0</code>卸载，修改可分配ip范围并重新装入到网络设备中</p>
+
+<div><pre><code class="language-none">$ sudo ip link set dev docker0 down
+$ sudo ip addr del 192.168.42.1/24 dev docker0
+$ sudo ip addr add 192.168.42.1/16 dev docker0
+$ sudo ip link set dev docker0 up</code></pre></div>
+
+<p>之后重新启动docker</p>
+
+<div><pre><code class="language-none">$ sudo service docker start</code></pre></div>
+
+<p>现在最高宿主机上可分配1024个ip地址，如果再多，建议重新部署一台服务器作为宿主机。</p>
+
+<p>另外docker默认存储路径是<code>/var/lib/docker</code>，而目前使用的云主机<code>/</code>挂载只有20g大小，如果image或container过多可能硬盘空间就不够了，所以需要重新挂载到新目录下。</p>
+
+<p>有两种方法，一种是默认目录作为挂载点挂载新目录，一种是修改配置</p>
+
+<p>第一种方法：</p>
+
+<p>停止docker服务，不多说了，之后通过rsync同步目录到新目录，然后修改fstab中的挂载信息，将新目录挂载到默认目录下，这样做的好处是不需要改动配置，依然使用默认目录。操作如下：</p>
+
+<div><pre><code class="language-none">$ sudo service docker stop #停止docker
+$ sudo mkdir -p /mnt/lib/docker #创建新目录
+$ sudo rsync /var/lib/docker/. /mnt/lib/docker/ #同步原有数据到新目录
+$ sudo echo &#39;/mnt/lib/docker /var/lib/docker none bind 0 0&#39; &gt;&gt; /etc/fstab #写入挂载信息
+$ sudo mount -a  #重新挂载
+$ df /var/lib/docker #可以看到已经挂载
+$ sudo service docker #启动docker</code></pre></div>
+
+<p>这样就可以将数据迁移到新目录下。</p>
+
+<p>第二种方法：</p>
+
+<p>使用<code>-g &lt;DIR&gt;</code>来修改配置，具体是修改<code>/etc/default/docker</code>文件，这个是默认的配置文件，修改其中的<code>DOCKER_OPTS</code>参数，加入</p>
+
+<div><pre><code class="language-none">-g /mnt/lib/docker</code></pre></div>
+
+<p>作为新的存储位置即可。这种方法比较方便但是修改了默认配置，之前的image和container需要同步一下或重新下载构建。</p>
+
+<p class='muted' style='font-size: 20px;'>Post On {{ page.date | date_to_string }} @<a href='http://www.skymoneyc.com'>SkyMoney</a></p>
+
+</div>
